@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>2026 Wishlist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="2026.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>2026 Wishlist</h1>
+      <div class="meta">100件まで登録。共有URLで友人と匿名利用。Supabaseに保存されリアルタイムで同期されます。</div>
+    </div>
+    <div class="badge"><span id="todo-count">0</span> / 100</div>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <h2>やりたいことを追加</h2>
+      <form id="wish-form">
+        <input id="title" placeholder="例: スペイン巡礼に行く" required maxlength="80" />
+        <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
+        <button type="submit">追加する</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>To Do</h2>
+      <div class="list" id="todo-list"></div>
+      <div class="empty" id="todo-empty">未登録です。まず追加しましょう。</div>
+    </div>
+
+    <div class="card">
+      <h2>達成済み</h2>
+      <div class="list" id="done-list"></div>
+      <div class="empty" id="done-empty">まだありません。</div>
+    </div>
+  </section>
+
+  <script src="2026.js"></script>
+</body>
+</html>
