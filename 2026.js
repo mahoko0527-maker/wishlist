@@ -81,8 +81,20 @@ async function loadWishes() {
 }
 
 async function addWish(title, note, who) {
-  if (state.todo.length >= MAX_ITEMS) {
-    alert('100個までです');
+  // その人の全投稿（達成済み含む）をカウント
+  const { count, error: countError } = await sb
+    .from('wishes')
+    .select('*', { count: 'exact', head: true })
+    .eq('board_id', boardId)
+    .eq('author', who);
+
+  if (countError) {
+    console.error('Count error:', countError);
+    return;
+  }
+
+  if (count >= MAX_ITEMS) {
+    alert(`「${who}」さんは100件に達しました。達成済みから削除してください。`);
     return;
   }
 
