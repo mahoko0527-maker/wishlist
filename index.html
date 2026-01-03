@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>2026 Wishlist</title>
+  <title>The hundred ―2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
@@ -14,24 +14,25 @@
   <header>
     <div>
       <h1>2026 Wishlist</h1>
-      <div class="meta">100件まで登録。共有URLで友人と匿名利用。Supabaseに保存されリアルタイムで同期されます。</div>
+      <div class="meta">１００のやりたいことをみんなで共有しよう
+      </div>
     </div>
     <div class="badge"><span id="current-name">全員</span>: <span id="todo-count">0</span> / <span id="max-count">100</span></div>
   </header>
 
   <section class="grid">
     <div class="card">
-      <h2>やりたいことを追加</h2>
+      <h2>今年やりたいことを追加</h2>
       <form id="wish-form">
         <input id="who" placeholder="ニックネーム" required maxlength="40" />
-        <input id="title" placeholder="例: スペイン巡礼に行く" required maxlength="80" />
+        <input id="title" placeholder="例: NYに行く" required maxlength="80" />
         <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
         <button type="submit">追加する</button>
       </form>
     </div>
 
     <div class="card">
-      <h2>To Do</h2>
+      <h2>今年やること</h2>
       <div class="muted">名前で絞り込み</div>
       <select id="name-filter"></select>
       <div class="list" id="todo-list"></div>
