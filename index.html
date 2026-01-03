@@ -13,26 +13,17 @@
 <body>
   <header>
     <div>
-      <h1><span id="title-name">あなた</span> のやりたいこと</h1>
+      <h1>2026 Wishlist</h1>
       <div class="meta">100件まで登録。共有URLで友人と匿名利用。Supabaseに保存されリアルタイムで同期されます。</div>
-      <div class="meta">表示中の名前: <span id="name-label">-</span></div>
     </div>
     <div class="badge"><span id="todo-count">0</span> / 100</div>
   </header>
 
   <section class="grid">
     <div class="card">
-      <h2>誰のリストを見る？</h2>
-      <form id="identity-form">
-        <input id="display-name" placeholder="あなたの名前（例: mahoko）" maxlength="40" />
-        <button type="submit">この名前で見る</button>
-      </form>
-      <div class="muted">名前ごとに100件管理。友達も自分の名前を入れて使えます。</div>
-    </div>
-
-    <div class="card">
       <h2>やりたいことを追加</h2>
       <form id="wish-form">
+        <input id="who" placeholder="名前（例: まほこ）" required maxlength="40" />
         <input id="title" placeholder="例: スペイン巡礼に行く" required maxlength="80" />
         <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
         <button type="submit">追加する</button>
@@ -41,6 +32,8 @@
 
     <div class="card">
       <h2>To Do</h2>
+      <div class="muted">名前で絞り込み</div>
+      <select id="name-filter"></select>
       <div class="list" id="todo-list"></div>
       <div class="empty" id="todo-empty">未登録です。まず追加しましょう。</div>
     </div>

@@ -11,12 +11,10 @@ let boardId = '';
 let authorId = '';
 let state = { todo: [], done: [] };
 let channel = null;
-let currentName = '';
+let filterName = 'all';
 
-const nameForm = document.getElementById('identity-form');
-const nameInput = document.getElementById('display-name');
-const nameLabel = document.getElementById('name-label');
-const titleName = document.getElementById('title-name');
+const nameFilter = document.getElementById('name-filter');
+const whoInput = document.getElementById('who');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -45,22 +43,13 @@ function generateId(len = 8) {
   return fallback();
 }
 
-function slugifyName(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32) || 'anon';
-}
-
-function getBoardId(defaultName = '') {
+function getBoardId() {
   const params = new URLSearchParams(location.search);
   let id = params.get('board');
-  if (id) return id;
-  if (defaultName) {
-    const slug = slugifyName(defaultName);
-    id = `name-${slug}`;
+  if (!id) {
+    id = generateId(10);
     history.replaceState(null, '', `?board=${id}`);
-    return id;
   }
-  id = generateId(10);
-  history.replaceState(null, '', `?board=${id}`);
   return id;
 }
 
@@ -91,7 +80,7 @@ async function loadWishes() {
   render();
 }
 
-async function addWish(title, note) {
+async function addWish(title, note, who) {
   if (state.todo.length >= MAX_ITEMS) {
     alert('100個までです');
     return;
@@ -101,7 +90,7 @@ async function addWish(title, note) {
     board_id: boardId,
     title,
     note,
-    author: authorId,
+    author: who,
     done: false
   });
 
@@ -166,21 +155,30 @@ function render() {
   todoListEl.innerHTML = '';
   doneListEl.innerHTML = '';
 
+  // フィルタ有無にかかわらず、後続で再設定する
   todoEmpty.style.display = state.todo.length ? 'none' : 'block';
   doneEmpty.style.display = state.done.length ? 'none' : 'block';
-  todoCount.textContent = state.todo.length;
-  if (nameLabel) {
-    nameLabel.textContent = boardId;
-  }
-  if (titleName) {
-    titleName.textContent = currentName || 'あなた';
+  const visibleNames = Array.from(new Set([...state.todo, ...state.done].map(i => i.author).filter(Boolean)));
+  if (nameFilter) {
+    const current = nameFilter.value || 'all';
+    nameFilter.innerHTML = '<option value="all">すべて</option>' + visibleNames.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+    nameFilter.value = current;
+    filterName = nameFilter.value || 'all';
   }
 
-  state.todo.forEach(item => {
+  const todoVisible = state.todo.filter(item => filterName === 'all' || item.author === filterName);
+  const doneVisible = state.done.filter(item => filterName === 'all' || item.author === filterName);
+
+  todoCount.textContent = todoVisible.length;
+  todoEmpty.style.display = todoVisible.length ? 'none' : 'block';
+  doneEmpty.style.display = doneVisible.length ? 'none' : 'block';
+
+  todoVisible.forEach(item => {
     const el = document.createElement('div');
     el.className = 'item';
     el.innerHTML = `
       <div>
+        ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
         ${item.note ? `<div class="muted">${escapeHtml(item.note)}</div>` : ''}
       </div>
@@ -191,11 +189,12 @@ function render() {
     todoListEl.appendChild(el);
   });
 
-  state.done.forEach(item => {
+  doneVisible.forEach(item => {
     const el = document.createElement('div');
     el.className = 'item';
     el.innerHTML = `
       <div>
+        ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
         ${item.note ? `<div class="muted">${escapeHtml(item.note)}</div>` : ''}
         ${item.feedback ? `<div class="muted">感想: ${escapeHtml(item.feedback)}</div>` : ''}
@@ -211,13 +210,18 @@ function render() {
 // ========== イベントハンドラ ==========
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  const who = whoInput ? whoInput.value.trim() : '';
   const title = titleInput.value.trim();
   const note = noteInput.value.trim();
-  if (!title) return;
+  if (!title || !who) {
+    alert('名前とやりたいことを入れてください');
+    return;
+  }
 
-  await addWish(title, note);
+  await addWish(title, note, who);
   titleInput.value = '';
   noteInput.value = '';
+  if (whoInput) whoInput.value = who; // keep the name in the box
 });
 
 todoListEl.addEventListener('click', async (e) => {
@@ -247,30 +251,14 @@ doneListEl.addEventListener('click', async (e) => {
   }
 });
 
-// ========== 名前切替ハンドラ ==========
-if (nameForm) {
-  nameForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const displayName = nameInput.value.trim();
-    if (!displayName) {
-      alert('名前を入れてください');
-      return;
-    }
-    localStorage.setItem('display-name', displayName);
-    currentName = displayName;
-    boardId = getBoardId(displayName);
-    await loadWishes();
-    subscribeToChanges();
+// ========== 初期化 ==========
+boardId = getBoardId();
+authorId = getAuthorId();
+if (nameFilter) {
+  nameFilter.addEventListener('change', () => {
+    filterName = nameFilter.value || 'all';
+    render();
   });
 }
-
-// ========== 初期化 ==========
-const savedName = localStorage.getItem('display-name') || '';
-if (nameInput) {
-  nameInput.value = savedName;
-}
-currentName = savedName;
-boardId = getBoardId(savedName);
-authorId = getAuthorId();
 loadWishes();
 subscribeToChanges();
