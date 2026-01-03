@@ -16,6 +16,7 @@ let filterName = 'all';
 const nameFilter = document.getElementById('name-filter');
 const whoInput = document.getElementById('who');
 const currentNameLabel = document.getElementById('current-name');
+const maxCountLabel = document.getElementById('max-count');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -194,7 +195,9 @@ function render() {
     maxCount = uniqueNames.length * MAX_ITEMS;
   }
   todoCount.textContent = todoVisible.length;
-  document.querySelector('.badge').textContent = `${currentNameLabel.textContent}: ${todoVisible.length} / ${maxCount}`;
+  if (maxCountLabel) {
+    maxCountLabel.textContent = maxCount;
+  }
   todoEmpty.style.display = todoVisible.length ? 'none' : 'block';
   doneEmpty.style.display = doneVisible.length ? 'none' : 'block';
 
