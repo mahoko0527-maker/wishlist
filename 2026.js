@@ -11,10 +11,12 @@ let boardId = '';
 let authorId = '';
 let state = { todo: [], done: [] };
 let channel = null;
+let currentName = '';
 
 const nameForm = document.getElementById('identity-form');
 const nameInput = document.getElementById('display-name');
 const nameLabel = document.getElementById('name-label');
+const titleName = document.getElementById('title-name');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -170,6 +172,9 @@ function render() {
   if (nameLabel) {
     nameLabel.textContent = boardId;
   }
+  if (titleName) {
+    titleName.textContent = currentName || 'あなた';
+  }
 
   state.todo.forEach(item => {
     const el = document.createElement('div');
@@ -252,6 +257,7 @@ if (nameForm) {
       return;
     }
     localStorage.setItem('display-name', displayName);
+    currentName = displayName;
     boardId = getBoardId(displayName);
     await loadWishes();
     subscribeToChanges();
@@ -263,6 +269,7 @@ const savedName = localStorage.getItem('display-name') || '';
 if (nameInput) {
   nameInput.value = savedName;
 }
+currentName = savedName;
 boardId = getBoardId(savedName);
 authorId = getAuthorId();
 loadWishes();
