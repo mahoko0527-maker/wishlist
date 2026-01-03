@@ -2,7 +2,8 @@
 const SUPABASE_URL = 'https://owoevjklzwaqqqjcgfhj.supabase.co';  // ← ここに Project URL を貼る
 const SUPABASE_ANON_KEY = 'sb_publishable_nwQq6MkYG54IMh9wZbortg_SVYtxxHl'; // ← ここに anon キーを貼る
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabaseのグローバル名と衝突しないようにローカル名を sb にする
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ========== グローバル状態 ==========
 const MAX_ITEMS = 100;
@@ -58,7 +59,7 @@ function getAuthorId() {
 
 // ========== データベース操作 ==========
 async function loadWishes() {
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('wishes')
     .select('*')
     .eq('board_id', boardId)
@@ -80,7 +81,7 @@ async function addWish(title, note) {
     return;
   }
 
-  const { error } = await supabase.from('wishes').insert({
+  const { error } = await sb.from('wishes').insert({
     board_id: boardId,
     title,
     note,
@@ -92,7 +93,7 @@ async function addWish(title, note) {
 }
 
 async function completeWish(id, feedback) {
-  const { error } = await supabase
+  const { error } = await sb
     .from('wishes')
     .update({ done: true, feedback })
     .eq('id', id);
@@ -101,12 +102,12 @@ async function completeWish(id, feedback) {
 }
 
 async function deleteWish(id) {
-  const { error } = await supabase.from('wishes').delete().eq('id', id);
+  const { error } = await sb.from('wishes').delete().eq('id', id);
   if (error) console.error('Delete error:', error);
 }
 
 async function undoWish(id) {
-  const { error } = await supabase
+  const { error } = await sb
     .from('wishes')
     .update({ done: false, feedback: null })
     .eq('id', id);
@@ -116,7 +117,7 @@ async function undoWish(id) {
 
 // ========== リアルタイム購読 ==========
 function subscribeToChanges() {
-  supabase
+  sb
     .channel(`board:${boardId}`)
     .on('postgres_changes', 
       { event: '*', schema: 'public', table: 'wishes', filter: `board_id=eq.${boardId}` },
