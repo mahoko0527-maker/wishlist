@@ -15,6 +15,7 @@ let filterName = 'all';
 
 const nameFilter = document.getElementById('name-filter');
 const whoInput = document.getElementById('who');
+const currentNameLabel = document.getElementById('current-name');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -181,6 +182,10 @@ function render() {
   const todoVisible = state.todo.filter(item => filterName === 'all' || item.author === filterName);
   const doneVisible = state.done.filter(item => filterName === 'all' || item.author === filterName);
 
+  // バッジを更新：現在のユーザー名と件数
+  if (currentNameLabel) {
+    currentNameLabel.textContent = filterName === 'all' ? '全員' : filterName;
+  }
   todoCount.textContent = todoVisible.length;
   todoEmpty.style.display = todoVisible.length ? 'none' : 'block';
   doneEmpty.style.display = doneVisible.length ? 'none' : 'block';
