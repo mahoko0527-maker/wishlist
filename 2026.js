@@ -10,6 +10,11 @@ const MAX_ITEMS = 100;
 let boardId = '';
 let authorId = '';
 let state = { todo: [], done: [] };
+let channel = null;
+
+const nameForm = document.getElementById('identity-form');
+const nameInput = document.getElementById('display-name');
+const nameLabel = document.getElementById('name-label');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -38,13 +43,22 @@ function generateId(len = 8) {
   return fallback();
 }
 
-function getBoardId() {
+function slugifyName(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32) || 'anon';
+}
+
+function getBoardId(defaultName = '') {
   const params = new URLSearchParams(location.search);
   let id = params.get('board');
-  if (!id) {
-    id = generateId(10);
+  if (id) return id;
+  if (defaultName) {
+    const slug = slugifyName(defaultName);
+    id = `name-${slug}`;
     history.replaceState(null, '', `?board=${id}`);
+    return id;
   }
+  id = generateId(10);
+  history.replaceState(null, '', `?board=${id}`);
   return id;
 }
 
@@ -89,7 +103,11 @@ async function addWish(title, note) {
     done: false
   });
 
-  if (error) console.error('Add error:', error);
+  if (error) {
+    console.error('Add error:', error);
+  } else {
+    await loadWishes(); // 追加直後に再読込して表示を確実に更新
+  }
 }
 
 async function completeWish(id, feedback) {
@@ -98,12 +116,20 @@ async function completeWish(id, feedback) {
     .update({ done: true, feedback })
     .eq('id', id);
 
-  if (error) console.error('Complete error:', error);
+  if (error) {
+    console.error('Complete error:', error);
+  } else {
+    await loadWishes(); // 達成後に再読込
+  }
 }
 
 async function deleteWish(id) {
   const { error } = await sb.from('wishes').delete().eq('id', id);
-  if (error) console.error('Delete error:', error);
+  if (error) {
+    console.error('Delete error:', error);
+  } else {
+    await loadWishes(); // 削除後に再読込
+  }
 }
 
 async function undoWish(id) {
@@ -112,12 +138,19 @@ async function undoWish(id) {
     .update({ done: false, feedback: null })
     .eq('id', id);
 
-  if (error) console.error('Undo error:', error);
+  if (error) {
+    console.error('Undo error:', error);
+  } else {
+    await loadWishes(); // 戻したら再読込
+  }
 }
 
 // ========== リアルタイム購読 ==========
 function subscribeToChanges() {
-  sb
+  if (channel) {
+    sb.removeChannel(channel);
+  }
+  channel = sb
     .channel(`board:${boardId}`)
     .on('postgres_changes', 
       { event: '*', schema: 'public', table: 'wishes', filter: `board_id=eq.${boardId}` },
@@ -134,6 +167,9 @@ function render() {
   todoEmpty.style.display = state.todo.length ? 'none' : 'block';
   doneEmpty.style.display = state.done.length ? 'none' : 'block';
   todoCount.textContent = state.todo.length;
+  if (nameLabel) {
+    nameLabel.textContent = boardId;
+  }
 
   state.todo.forEach(item => {
     const el = document.createElement('div');
@@ -206,8 +242,28 @@ doneListEl.addEventListener('click', async (e) => {
   }
 });
 
+// ========== 名前切替ハンドラ ==========
+if (nameForm) {
+  nameForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const displayName = nameInput.value.trim();
+    if (!displayName) {
+      alert('名前を入れてください');
+      return;
+    }
+    localStorage.setItem('display-name', displayName);
+    boardId = getBoardId(displayName);
+    await loadWishes();
+    subscribeToChanges();
+  });
+}
+
 // ========== 初期化 ==========
-boardId = getBoardId();
+const savedName = localStorage.getItem('display-name') || '';
+if (nameInput) {
+  nameInput.value = savedName;
+}
+boardId = getBoardId(savedName);
 authorId = getAuthorId();
 loadWishes();
 subscribeToChanges();
