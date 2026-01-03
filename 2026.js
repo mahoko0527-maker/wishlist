@@ -186,7 +186,15 @@ function render() {
   if (currentNameLabel) {
     currentNameLabel.textContent = filterName === 'all' ? '全員' : filterName;
   }
+  
+  // 「すべて」の場合は全員の合計上限、特定名の場合は100
+  let maxCount = MAX_ITEMS;
+  if (filterName === 'all') {
+    const uniqueNames = Array.from(new Set([...state.todo, ...state.done].map(i => i.author).filter(Boolean)));
+    maxCount = uniqueNames.length * MAX_ITEMS;
+  }
   todoCount.textContent = todoVisible.length;
+  document.querySelector('.badge').textContent = `${currentNameLabel.textContent}: ${todoVisible.length} / ${maxCount}`;
   todoEmpty.style.display = todoVisible.length ? 'none' : 'block';
   doneEmpty.style.display = doneVisible.length ? 'none' : 'block';
 
