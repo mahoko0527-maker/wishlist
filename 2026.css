@@ -63,8 +63,16 @@ select {
 }
 select:hover { background: rgba(255,255,255,0.09); }
 select option { background: #0e1228; color: var(--text); }
-@media (max-width: 640px) {
-  body { padding: 22px 5vw 36px; }
+@media (max-width: 768px) {
+  body { padding: 20px 4vw 32px; }
+  h1 { font-size: clamp(24px, 5vw, 32px); }
+  .grid { grid-template-columns: 1fr; gap: 14px; }
+  .card { padding: 14px; }
+  input, textarea, button, select { padding: 10px 12px; font-size: 14px; }
+  textarea { min-height: 70px; }
   .item { grid-template-columns: 1fr; }
   .actions { justify-content: flex-start; }
+  .pill { padding: 5px 10px; font-size: 12px; }
+  .title { font-size: 14px; }
+  .muted { font-size: 12px; }
 } 
