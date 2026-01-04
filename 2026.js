@@ -290,3 +290,14 @@ if (nameFilter) {
 }
 loadWishes();
 subscribeToChanges();
+
+// ========== スプラッシュアニメーション ==========
+const splash = document.getElementById('splash');
+if (splash) {
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+    }, 1000);
+  }, 1800); // 1.8秒表示してからフェードアウト
+}
