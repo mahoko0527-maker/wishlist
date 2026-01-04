@@ -150,6 +150,44 @@ async function undoWish(id) {
   }
 }
 
+// ========== 参加・いいね機能 ==========
+async function addParticipant(wishId, userName) {
+  const wish = [...state.todo, ...state.done].find(w => w.id === wishId);
+  if (!wish) return;
+
+  const participants = JSON.parse(wish.participants || '[]');
+  if (!participants.includes(userName)) {
+    participants.push(userName);
+  }
+
+  const { error } = await sb
+    .from('wishes')
+    .update({ participants: JSON.stringify(participants) })
+    .eq('id', wishId);
+
+  if (error) {
+    console.error('Participant error:', error);
+  } else {
+    await loadWishes();
+  }
+}
+
+async function toggleLike(wishId) {
+  const wish = [...state.todo, ...state.done].find(w => w.id === wishId);
+  if (!wish) return;
+
+  const { error } = await sb
+    .from('wishes')
+    .update({ likes: (wish.likes || 0) + 1 })
+    .eq('id', wishId);
+
+  if (error) {
+    console.error('Like error:', error);
+  } else {
+    await loadWishes();
+  }
+}
+
 // ========== リアルタイム購読 ==========
 function subscribeToChanges() {
   if (channel) {
@@ -204,13 +242,18 @@ function render() {
   todoVisible.forEach(item => {
     const el = document.createElement('div');
     el.className = 'item';
+    const participants = JSON.parse(item.participants || '[]');
+    const likes = item.likes || 0;
     el.innerHTML = `
       <div>
         ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
         ${item.note ? `<div class="muted">${escapeHtml(item.note)}</div>` : ''}
+        <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
       </div>
       <div class="actions">
+        <button class="pill" data-join="${item.id}">参加したい</button>
+        <button class="pill" data-like="${item.id}">いいね</button>
         <button class="pill complete" data-complete="${item.id}">達成</button>
         <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
@@ -220,12 +263,15 @@ function render() {
   doneVisible.forEach(item => {
     const el = document.createElement('div');
     el.className = 'item';
+    const participants = JSON.parse(item.participants || '[]');
+    const likes = item.likes || 0;
     el.innerHTML = `
       <div>
         ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
         ${item.note ? `<div class="muted">${escapeHtml(item.note)}</div>` : ''}
         ${item.feedback ? `<div class="muted">感想: ${escapeHtml(item.feedback)}</div>` : ''}
+        <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
       </div>
       <div class="actions">
         <button class="pill" data-undo="${item.id}">戻す</button>
@@ -253,10 +299,21 @@ form.addEventListener('submit', async (e) => {
 });
 
 todoListEl.addEventListener('click', async (e) => {
+  const joinId = e.target.dataset.join;
+  const likeId = e.target.dataset.like;
   const completeId = e.target.dataset.complete;
   const delId = e.target.dataset.del;
 
-  if (completeId) {
+  if (joinId) {
+    const name = (whoInput ? whoInput.value.trim() : '') || (prompt('あなたの名前を入れてください') || '').trim();
+    if (!name) {
+      alert('名前を入れてください');
+      return;
+    }
+    await addParticipant(joinId, name);
+  } else if (likeId) {
+    await toggleLike(likeId);
+  } else if (completeId) {
     const feedback = prompt('達成おめでとう！ 感想を入れますか？（任意）') || '';
     await completeWish(completeId, feedback.trim());
   } else if (delId) {
