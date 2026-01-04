@@ -252,8 +252,8 @@ function render() {
         <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
       </div>
       <div class="actions">
-        <button class="pill" data-join="${item.id}">参加したい</button>
-        <button class="pill" data-like="${item.id}">いいね</button>
+        <button class="pill" data-join="${item.id}" aria-label="参加したい">&#128101;</button>
+        <button class="pill" data-like="${item.id}" aria-label="いいね">&hearts;</button>
         <button class="pill complete" data-complete="${item.id}">達成</button>
         <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
