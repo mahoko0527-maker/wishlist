@@ -176,9 +176,19 @@ async function toggleLike(wishId) {
   const wish = [...state.todo, ...state.done].find(w => w.id === wishId);
   if (!wish) return;
 
+  const likesUsers = JSON.parse(wish.likes_users || '[]');
+  if (likesUsers.includes(authorId)) {
+    alert('既にいいねしています');
+    return;
+  }
+
+  likesUsers.push(authorId);
   const { error } = await sb
     .from('wishes')
-    .update({ likes: (wish.likes || 0) + 1 })
+    .update({ 
+      likes_users: JSON.stringify(likesUsers),
+      likes: (wish.likes || 0) + 1 
+    })
     .eq('id', wishId);
 
   if (error) {
@@ -244,6 +254,8 @@ function render() {
     el.className = 'item';
     const participants = JSON.parse(item.participants || '[]');
     const likes = item.likes || 0;
+    const likesUsers = JSON.parse(item.likes_users || '[]');
+    const alreadyLiked = likesUsers.includes(authorId);
     el.innerHTML = `
       <div>
         ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
@@ -253,7 +265,7 @@ function render() {
       </div>
       <div class="actions">
         <button class="pill" data-join="${item.id}">参加したい</button>
-        <button class="pill" data-like="${item.id}">いいね</button>
+        <button class="pill${alreadyLiked ? ' disabled' : ''}" data-like="${item.id}" ${alreadyLiked ? 'disabled' : ''}>いいね${alreadyLiked ? '済み' : ''}</button>
         <button class="pill complete" data-complete="${item.id}">達成</button>
         <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
