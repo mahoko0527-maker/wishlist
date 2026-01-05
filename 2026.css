@@ -25,6 +25,7 @@ body {
   justify-content: center;
   z-index: 9999;
   transition: opacity 0.8s ease;
+  opacity: 1;
 }
 #splash.fade-out {
   opacity: 0;
@@ -41,7 +42,7 @@ header { display: flex; justify-content: space-between; align-items: center; fle
 h1 { margin: 0; font-family: 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: 0.5px; font-size: clamp(28px, 4vw, 38px); }
 .meta { color: var(--muted); font-size: 14px; }
 .badge { padding: 8px 14px; background: var(--panel); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; font-size: 14px; color: var(--muted); }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 .card {
   background: var(--panel); border: 1px solid rgba(255,255,255,0.07);
   border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
@@ -63,7 +64,13 @@ button:hover { transform: translateY(-1px); }
 .item {
   padding: 12px 14px; border-radius: 12px;
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-  display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+  display: grid; grid-template-columns: 1fr; gap: 10px; align-items: start;
+}
+.item > div:first-child {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.item .actions {
+  align-self: start; margin-top: 4px;
 }
 .title { font-weight: 600; }
 .muted { color: var(--muted); font-size: 13px; }
