@@ -29,7 +29,6 @@ const todoCount = document.getElementById('todo-count');
 const myIdDisplay = document.getElementById('myid-display');
 const myIdInput = document.getElementById('myid-input');
 const copyMyIdBtn = document.getElementById('copy-myid');
-const applyMyIdBtn = document.getElementById('apply-myid');
 
 // ========== ユーティリティ ==========
 function escapeHtml(str) {
@@ -60,12 +59,7 @@ function getBoardId() {
 }
 
 function getAuthorId() {
-  let id = localStorage.getItem('author-2026');
-  if (!id) {
-    id = generateId(6);
-    localStorage.setItem('author-2026', id);
-  }
-  return id;
+  return localStorage.getItem('author-2026') || '';
 }
 
 function setAuthorId(id) {
@@ -76,12 +70,19 @@ function setAuthorId(id) {
 }
 
 function updateMyIdUI() {
-  if (myIdDisplay) {
-    myIdDisplay.value = authorId;
+  const currentDiv = document.getElementById('myid-current');
+  const formDiv = document.getElementById('myid-form');
+  
+  if (authorId) {
+    if (myIdDisplay) myIdDisplay.value = authorId;
+    if (currentDiv) currentDiv.style.display = 'block';
+    if (formDiv) formDiv.style.display = 'none';
+  } else {
+    if (currentDiv) currentDiv.style.display = 'none';
+    if (formDiv) formDiv.style.display = 'block';
   }
-  if (myIdInput) {
-    myIdInput.value = '';
-  }
+  
+  if (myIdInput) myIdInput.value = '';
 }
 
 // ========== データベース操作 ==========
@@ -389,16 +390,33 @@ if (copyMyIdBtn) {
     }
   });
 }
-if (applyMyIdBtn) {
-  applyMyIdBtn.addEventListener('click', () => {
+
+const changeMyIdBtn = document.getElementById('change-myid');
+if (changeMyIdBtn) {
+  changeMyIdBtn.addEventListener('click', () => {
+    const currentDiv = document.getElementById('myid-current');
+    const formDiv = document.getElementById('myid-form');
+    if (currentDiv) currentDiv.style.display = 'none';
+    if (formDiv) formDiv.style.display = 'block';
+    if (myIdInput) myIdInput.value = authorId;
+  });
+}
+
+const saveMyIdBtn = document.getElementById('save-myid');
+if (saveMyIdBtn) {
+  saveMyIdBtn.addEventListener('click', () => {
     const newId = (myIdInput ? myIdInput.value.trim() : '') || '';
     if (!newId) {
       alert('MyIDを入力してください');
       return;
     }
+    if (!/^[a-zA-Z0-9_-]+$/.test(newId)) {
+      alert('MyIDは英数字とハイフン、アンダースコアのみ使えます');
+      return;
+    }
     setAuthorId(newId);
-    loadWishes(); // いいね済み判定を再評価
-    alert('MyIDを適用しました');
+    loadWishes();
+    alert('MyIDを保存しました');
   });
 }
 loadWishes();

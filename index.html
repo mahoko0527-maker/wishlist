@@ -30,15 +30,19 @@
         <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
         <button type="submit">追加する</button>
       </form>
-      <div class="muted">この端末のMyID（別端末でも同じIDを入れれば同一人物として扱います）</div>
-      <div class="id-row">
-        <input id="myid-display" readonly>
-        <button type="button" class="pill" id="copy-myid">コピー</button>
+      <div class="muted">あなたのMyID（好きな英数字で作成。別端末でも同じIDを入れれば同一人物として扱います）</div>
+      <div id="myid-current" style="display:none;">
+        <div class="id-row">
+          <input id="myid-display" readonly>
+          <button type="button" class="pill" id="copy-myid">コピー</button>
+          <button type="button" class="pill" id="change-myid">変更</button>
+        </div>
       </div>
-      <div class="muted">別端末で使ったMyIDをセット</div>
-      <div class="id-row">
-        <input id="myid-input" placeholder="例: abcd1234">
-        <button type="button" class="pill" id="apply-myid">セット</button>
+      <div id="myid-form">
+        <div class="id-row">
+          <input id="myid-input" placeholder="例: taro2026">
+          <button type="button" class="pill" id="save-myid">保存</button>
+        </div>
       </div>
     </div>
 
