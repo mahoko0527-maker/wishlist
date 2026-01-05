@@ -229,6 +229,29 @@ async function toggleLike(wishId) {
   }
 }
 
+async function addComment(wishId, commentText, userName) {
+  const wish = [...state.todo, ...state.done].find(w => w.id === wishId);
+  if (!wish) return;
+
+  const comments = JSON.parse(wish.comments || '[]');
+  comments.push({
+    text: commentText,
+    author: userName,
+    created_at: new Date().toISOString()
+  });
+
+  const { error } = await sb
+    .from('wishes')
+    .update({ comments: JSON.stringify(comments) })
+    .eq('id', wishId);
+
+  if (error) {
+    console.error('Comment error:', error);
+  } else {
+    await loadWishes();
+  }
+}
+
 // ========== リアルタイム購読 ==========
 function subscribeToChanges() {
   if (channel) {
@@ -287,6 +310,7 @@ function render() {
     const likes = item.likes || 0;
     const likesUsers = JSON.parse(item.likes_users || '[]');
     const alreadyLiked = likesUsers.includes(authorId);
+    const comments = JSON.parse(item.comments || '[]');
     el.innerHTML = `
       <button class="item-close" data-del="${item.id}">×</button>
       <div>
@@ -294,11 +318,13 @@ function render() {
         <div class="title">${escapeHtml(item.title)}</div>
         ${item.note ? `<div class="muted">${escapeHtml(item.note)}</div>` : ''}
         <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
+        ${comments.length > 0 ? `<div class="comments">${comments.map(c => `<div class="comment"><span class="comment-author">${escapeHtml(c.author)}:</span> ${escapeHtml(c.text)}</div>`).join('')}</div>` : ''}
       </div>
       <div class="actions">
         <button class="pill small" data-join="${item.id}">count me in!</button>
         <button class="pill like small${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね">&hearts;</button>
         <button class="pill complete full" data-complete="${item.id}">Done</button>
+        <button class="pill" data-comment="${item.id}">コメント</button>
       </div>`;
     todoListEl.appendChild(el);
   });
@@ -346,6 +372,7 @@ todoListEl.addEventListener('click', async (e) => {
   const likeId = e.target.dataset.like;
   const completeId = e.target.dataset.complete;
   const delId = e.target.dataset.del;
+  const commentId = e.target.dataset.comment;
 
   if (joinId) {
     const name = (whoInput ? whoInput.value.trim() : '') || (prompt('あなたの名前を入れてください') || '').trim();
@@ -356,6 +383,19 @@ todoListEl.addEventListener('click', async (e) => {
     await addParticipant(joinId, name);
   } else if (likeId) {
     await toggleLike(likeId);
+  } else if (commentId) {
+    const name = (whoInput ? whoInput.value.trim() : '') || (prompt('あなたの名前を入れてください') || '').trim();
+    if (!name) {
+      alert('名前を入れてください');
+      return;
+    }
+    const comment = (prompt('コメント（100字まで）') || '').trim();
+    if (!comment) return;
+    if (comment.length > 100) {
+      alert('コメントは100字までです');
+      return;
+    }
+    await addComment(commentId, comment, name);
   } else if (completeId) {
     const feedback = prompt('達成おめでとう！ 感想を入れますか？（任意）') || '';
     await completeWish(completeId, feedback.trim());

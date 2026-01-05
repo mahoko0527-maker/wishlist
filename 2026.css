@@ -100,6 +100,9 @@ button:hover { transform: translateY(-1px); }
 .pill.like { background: transparent; border: none; box-shadow: none; color: rgba(255,255,255,0.75); padding: 8px 10px; font-size: 18px; flex: 0 1 calc(25% - 4px); }
 .pill.like:hover { transform: translateY(-1px) scale(1.02); color: #ff6b6b; }
 .pill.like.liked { background: transparent; color: #ff6b6b; border: none; }
+.comments { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.comment { padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 13px; line-height: 1.4; }
+.comment-author { color: var(--accent2); font-weight: 600; }
 .id-row {
   display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap;
 }
