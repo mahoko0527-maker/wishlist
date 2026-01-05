@@ -88,8 +88,8 @@ button:hover { transform: translateY(-1px); }
 .pill.complete { background: linear-gradient(135deg, var(--accent2), #7cf2c7); color: #082016; border: none; font-weight: 700; }
 .pill.complete.full { flex: 1 1 100%; }
 .pill.danger { border-color: rgba(255,107,107,0.6); color: #ffcdd2; }
-.pill.small { flex: 3 1 auto; }
-.pill.like { background: transparent; border: none; box-shadow: none; color: rgba(255,255,255,0.75); padding: 8px 10px; font-size: 18px; flex: 1 1 auto; }
+.pill.small { flex: 0 1 calc(75% - 4px); }
+.pill.like { background: transparent; border: none; box-shadow: none; color: rgba(255,255,255,0.75); padding: 8px 10px; font-size: 18px; flex: 0 1 calc(25% - 4px); }
 .pill.like:hover { transform: translateY(-1px) scale(1.02); color: #ff6b6b; }
 .pill.like.liked { background: transparent; color: #ff6b6b; border: none; }
 .id-row {
