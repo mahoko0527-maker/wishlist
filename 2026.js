@@ -198,24 +198,34 @@ async function toggleLike(wishId) {
   if (!wish) return;
 
   const likesUsers = JSON.parse(wish.likes_users || '[]');
-  if (likesUsers.includes(authorId)) {
-    alert('既にいいねしています');
-    return;
-  }
+  const hasLiked = likesUsers.includes(authorId);
+  let likesCount = wish.likes || 0;
 
-  likesUsers.push(authorId);
-  const { error } = await sb
-    .from('wishes')
-    .update({ 
-      likes_users: JSON.stringify(likesUsers),
-      likes: (wish.likes || 0) + 1 
-    })
-    .eq('id', wishId);
-
-  if (error) {
-    console.error('Like error:', error);
+  if (hasLiked) {
+    // 取り消し
+    const updated = likesUsers.filter(id => id !== authorId);
+    likesCount = Math.max(0, likesCount - 1);
+    const { error } = await sb
+      .from('wishes')
+      .update({ likes_users: JSON.stringify(updated), likes: likesCount })
+      .eq('id', wishId);
+    if (error) {
+      console.error('Like error:', error);
+    } else {
+      await loadWishes();
+    }
   } else {
-    await loadWishes();
+    // 新規いいね
+    likesUsers.push(authorId);
+    const { error } = await sb
+      .from('wishes')
+      .update({ likes_users: JSON.stringify(likesUsers), likes: likesCount + 1 })
+      .eq('id', wishId);
+    if (error) {
+      console.error('Like error:', error);
+    } else {
+      await loadWishes();
+    }
   }
 }
 
@@ -285,9 +295,9 @@ function render() {
         <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
       </div>
       <div class="actions">
-        <button class="pill" data-join="${item.id}">参加したい</button>
-        <button class="pill like${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね" ${alreadyLiked ? 'disabled' : ''}>&hearts;</button>
-        <button class="pill complete" data-complete="${item.id}">達成</button>
+        <button class="pill small" data-join="${item.id}">参加したい</button>
+        <button class="pill like small${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね">&hearts;</button>
+        <button class="pill complete full" data-complete="${item.id}">達成</button>
         <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
     todoListEl.appendChild(el);
