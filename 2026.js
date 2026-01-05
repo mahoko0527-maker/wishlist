@@ -286,7 +286,7 @@ function render() {
       </div>
       <div class="actions">
         <button class="pill" data-join="${item.id}">参加したい</button>
-        <button class="pill${alreadyLiked ? ' disabled' : ''}" data-like="${item.id}" ${alreadyLiked ? 'disabled' : ''}>いいね${alreadyLiked ? '済み' : ''}</button>
+        <button class="pill like${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね" ${alreadyLiked ? 'disabled' : ''}>&hearts;</button>
         <button class="pill complete" data-complete="${item.id}">達成</button>
         <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
