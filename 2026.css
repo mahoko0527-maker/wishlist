@@ -42,7 +42,7 @@ header { display: flex; justify-content: space-between; align-items: center; fle
 h1 { margin: 0; font-family: 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: 0.5px; font-size: clamp(28px, 4vw, 38px); }
 .meta { color: var(--muted); font-size: 14px; }
 .badge { padding: 8px 14px; background: var(--panel); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; font-size: 14px; color: var(--muted); }
-.grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
 .card {
   background: var(--panel); border: 1px solid rgba(255,255,255,0.07);
   border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
