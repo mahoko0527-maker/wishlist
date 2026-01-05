@@ -296,9 +296,9 @@ function render() {
         <div class="muted">参加: ${participants.length}人 / いいね: ${likes}</div>
       </div>
       <div class="actions">
-        <button class="pill small" data-join="${item.id}">参加したい</button>
+        <button class="pill small" data-join="${item.id}">count me in!</button>
         <button class="pill like small${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね">&hearts;</button>
-        <button class="pill complete full" data-complete="${item.id}">達成</button>
+        <button class="pill complete full" data-complete="${item.id}">Done</button>
       </div>`;
     todoListEl.appendChild(el);
   });
