@@ -418,6 +418,8 @@ if (saveMyIdBtn) {
     loadWishes();
     alert('MyIDを保存しました');
   });
+} else {
+  console.error('save-myid button not found');
 }
 loadWishes();
 subscribeToChanges();
