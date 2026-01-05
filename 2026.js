@@ -288,6 +288,7 @@ function render() {
     const likesUsers = JSON.parse(item.likes_users || '[]');
     const alreadyLiked = likesUsers.includes(authorId);
     el.innerHTML = `
+      <button class="item-close" data-del="${item.id}">×</button>
       <div>
         ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
@@ -298,7 +299,6 @@ function render() {
         <button class="pill small" data-join="${item.id}">参加したい</button>
         <button class="pill like small${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね">&hearts;</button>
         <button class="pill complete full" data-complete="${item.id}">達成</button>
-        <button class="pill danger" data-del="${item.id}">削除</button>
       </div>`;
     todoListEl.appendChild(el);
   });
@@ -309,6 +309,7 @@ function render() {
     const participants = JSON.parse(item.participants || '[]');
     const likes = item.likes || 0;
     el.innerHTML = `
+      <button class="item-close" data-del-done="${item.id}">×</button>
       <div>
         ${item.author ? `<div class="muted">${escapeHtml(item.author)}</div>` : ''}
         <div class="title">${escapeHtml(item.title)}</div>
@@ -318,7 +319,6 @@ function render() {
       </div>
       <div class="actions">
         <button class="pill" data-undo="${item.id}">戻す</button>
-        <button class="pill danger" data-del-done="${item.id}">削除</button>
       </div>`;
     doneListEl.appendChild(el);
   });
