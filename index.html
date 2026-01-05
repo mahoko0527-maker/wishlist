@@ -12,9 +12,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div id="splash">
-    <div class="splash-content">the hundred</div>
-  </div>
   <header>
     <div>
       <h1>The hundred ―2026</h1>
@@ -33,6 +30,16 @@
         <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
         <button type="submit">追加する</button>
       </form>
+      <div class="muted">この端末のMyID（別端末でも同じIDを入れれば同一人物として扱います）</div>
+      <div class="id-row">
+        <input id="myid-display" readonly>
+        <button type="button" class="pill" id="copy-myid">コピー</button>
+      </div>
+      <div class="muted">別端末で使ったMyIDをセット</div>
+      <div class="id-row">
+        <input id="myid-input" placeholder="例: abcd1234">
+        <button type="button" class="pill" id="apply-myid">セット</button>
+      </div>
     </div>
 
     <div class="card">

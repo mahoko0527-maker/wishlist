@@ -26,6 +26,10 @@ const doneListEl = document.getElementById('done-list');
 const todoEmpty = document.getElementById('todo-empty');
 const doneEmpty = document.getElementById('done-empty');
 const todoCount = document.getElementById('todo-count');
+const myIdDisplay = document.getElementById('myid-display');
+const myIdInput = document.getElementById('myid-input');
+const copyMyIdBtn = document.getElementById('copy-myid');
+const applyMyIdBtn = document.getElementById('apply-myid');
 
 // ========== ユーティリティ ==========
 function escapeHtml(str) {
@@ -62,6 +66,22 @@ function getAuthorId() {
     localStorage.setItem('author-2026', id);
   }
   return id;
+}
+
+function setAuthorId(id) {
+  authorId = id;
+  localStorage.setItem('author-2026', id);
+  updateMyIdUI();
+  render();
+}
+
+function updateMyIdUI() {
+  if (myIdDisplay) {
+    myIdDisplay.value = authorId;
+  }
+  if (myIdInput) {
+    myIdInput.value = '';
+  }
 }
 
 // ========== データベース操作 ==========
@@ -351,10 +371,34 @@ doneListEl.addEventListener('click', async (e) => {
 // ========== 初期化 ==========
 boardId = getBoardId();
 authorId = getAuthorId();
+updateMyIdUI();
 if (nameFilter) {
   nameFilter.addEventListener('change', () => {
     filterName = nameFilter.value || 'all';
     render();
+  });
+}
+if (copyMyIdBtn) {
+  copyMyIdBtn.addEventListener('click', async () => {
+    if (!authorId) return;
+    try {
+      await navigator.clipboard.writeText(authorId);
+      alert('MyIDをコピーしました');
+    } catch (e) {
+      alert('コピーに失敗しました。手動でコピーしてください。');
+    }
+  });
+}
+if (applyMyIdBtn) {
+  applyMyIdBtn.addEventListener('click', () => {
+    const newId = (myIdInput ? myIdInput.value.trim() : '') || '';
+    if (!newId) {
+      alert('MyIDを入力してください');
+      return;
+    }
+    setAuthorId(newId);
+    loadWishes(); // いいね済み判定を再評価
+    alert('MyIDを適用しました');
   });
 }
 loadWishes();
