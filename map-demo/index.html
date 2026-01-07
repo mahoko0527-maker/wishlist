@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>日本地図デモ（japan.svg 連携）</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <button id="resetBtn" title="選択を全てクリア">リセット</button>
+    <h1>日本地図（クリックで選択 / 保存）</h1>
+  </header>
+
+  <main>
+    <section class="map-panel">
+      <div class="legend">
+        <span class="swatch selected"></span> 選択済み
+        <span class="swatch hover"></span> ホバー
+        <span class="swatch base"></span> 未選択
+      </div>
+      <div id="map-container" class="map-container" aria-label="日本地図"></div>
+      <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+    </section>
+
+    <aside class="side-panel">
+      <h2>選択中の都道府県</h2>
+      <ul id="selectedList" class="selected-list"></ul>
+    </aside>
+  </main>
+
+  <footer class="app-footer">
+    <small>データはブラウザの localStorage に保存されます。</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
