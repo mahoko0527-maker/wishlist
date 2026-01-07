@@ -19,48 +19,75 @@
       <div class="meta">１００のやりたいことをみんなで共有しよう
       </div>
     </div>
-    <div class="badge"><span id="current-name">全員</span>: <span id="todo-count">0</span> / <span id="max-count">100</span></div>
+    <div class="header-right">
+      <div class="badge"><span id="current-name">全員</span>: <span id="todo-count">0</span> / <span id="max-count">100</span></div>
+      <button id="menu-toggle" aria-label="メニュー">☰</button>
+      <div id="menu" class="menu hidden">
+        <button class="menu-item" data-page="main-page">リスト</button>
+        <button class="menu-item" data-page="map-page">マップ</button>
+      </div>
+    </div>
   </header>
 
-  <section class="grid">
-    <div class="card">
-      <h2>今年やりたいことを追加</h2>
-      <form id="wish-form">
-        <input id="who" placeholder="ニックネーム" required maxlength="40" />
-        <input id="title" placeholder="例: NYに行く" required maxlength="80" />
-        <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
-        <button type="submit">追加する</button>
-      </form>
-      <div class="muted" style="margin-top: 20px;">あなたのMyID（好きな英数字で作成。別端末でも同じIDを入れれば同一人物として扱います）</div>
-      <div id="myid-current" style="display:none;">
-        <div class="id-row">
-          <input id="myid-display" readonly>
-          <button type="button" class="pill" id="copy-myid">コピー</button>
-          <button type="button" class="pill" id="change-myid">変更</button>
+  <main>
+    <section id="main-page">
+      <div class="grid">
+        <div class="card">
+          <h2>今年やりたいことを追加</h2>
+          <form id="wish-form">
+            <input id="who" placeholder="ニックネーム" required maxlength="40" />
+            <input id="title" placeholder="例: NYに行く" required maxlength="80" />
+            <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
+            <button type="submit">追加する</button>
+          </form>
+          <div class="muted" style="margin-top: 20px;">あなたのMyID（好きな英数字で作成。別端末でも同じIDを入れれば同一人物として扱います）</div>
+          <div id="myid-current" style="display:none;">
+            <div class="id-row">
+              <input id="myid-display" readonly>
+              <button type="button" class="pill" id="copy-myid">コピー</button>
+              <button type="button" class="pill" id="change-myid">変更</button>
+            </div>
+          </div>
+          <div id="myid-form">
+            <div class="id-row">
+              <input id="myid-input" placeholder="例: taro2026">
+              <button type="button" class="pill" id="save-myid">保存</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>やること</h2>
+          <div class="muted">名前で絞り込み</div>
+          <select id="name-filter"></select>
+          <div class="list" id="todo-list"></div>
+          <div class="empty" id="todo-empty">未登録です。まず追加しましょう。</div>
+        </div>
+
+        <div class="card">
+          <h2>達成済み</h2>
+          <div class="list" id="done-list"></div>
+          <div class="empty" id="done-empty">まだありません。</div>
         </div>
       </div>
-      <div id="myid-form">
-        <div class="id-row">
-          <input id="myid-input" placeholder="例: taro2026">
-          <button type="button" class="pill" id="save-myid">保存</button>
+    </section>
+
+    <section id="map-page" class="hidden">
+      <div class="card">
+        <h2>訪問地マップ（都道府県）</h2>
+        <div class="muted">クリックで訪問/未訪問を切替（保存されます）。表示モード: <span id="map-mode-label">自分</span></div>
+        <div class="map-controls">
+          <button class="pill" id="map-mode-self">自分</button>
+          <button class="pill" id="map-mode-all">全体</button>
+        </div>
+        <div class="jp-grid" id="jp-grid"></div>
+        <div class="legend">
+          <span class="legend-dot self"></span>自分　
+          <span class="legend-dot any"></span>誰か訪問
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <h2>やること</h2>
-      <div class="muted">名前で絞り込み</div>
-      <select id="name-filter"></select>
-      <div class="list" id="todo-list"></div>
-      <div class="empty" id="todo-empty">未登録です。まず追加しましょう。</div>
-    </div>
-
-    <div class="card">
-      <h2>達成済み</h2>
-      <div class="list" id="done-list"></div>
-      <div class="empty" id="done-empty">まだありません。</div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <!-- キャッシュを避けるためバージョン付きで読み込み -->
   <script src="2026.js?v=5"></script>

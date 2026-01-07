@@ -12,6 +12,9 @@ let authorId = '';
 let state = { todo: [], done: [] };
 let channel = null;
 let filterName = 'all';
+let mapMode = 'self'; // self or all
+let visitedSelf = new Set();
+let visitedAny = new Set();
 
 const nameFilter = document.getElementById('name-filter');
 const whoInput = document.getElementById('who');
@@ -29,6 +32,14 @@ const todoCount = document.getElementById('todo-count');
 const myIdDisplay = document.getElementById('myid-display');
 const myIdInput = document.getElementById('myid-input');
 const copyMyIdBtn = document.getElementById('copy-myid');
+const mainPage = document.getElementById('main-page');
+const mapPage = document.getElementById('map-page');
+const menuToggle = document.getElementById('menu-toggle');
+const menu = document.getElementById('menu');
+const jpGrid = document.getElementById('jp-grid');
+const mapModeLabel = document.getElementById('map-mode-label');
+const mapModeSelfBtn = document.getElementById('map-mode-self');
+const mapModeAllBtn = document.getElementById('map-mode-all');
 
 // ========== ユーティリティ ==========
 function escapeHtml(str) {
@@ -252,6 +263,129 @@ async function addComment(wishId, commentText, userName) {
   }
 }
 
+// ========== マップ用 ==========
+const PREF_TILES = [
+  { code: '01', name: '北海道', row: 1, col: 5 },
+  { code: '02', name: '青森', row: 2, col: 4 },
+  { code: '03', name: '岩手', row: 2, col: 5 },
+  { code: '04', name: '宮城', row: 2, col: 6 },
+  { code: '05', name: '秋田', row: 3, col: 4 },
+  { code: '06', name: '山形', row: 3, col: 5 },
+  { code: '07', name: '福島', row: 3, col: 6 },
+  { code: '08', name: '茨城', row: 3, col: 7 },
+  { code: '09', name: '栃木', row: 4, col: 6 },
+  { code: '10', name: '群馬', row: 4, col: 5 },
+  { code: '11', name: '埼玉', row: 4, col: 4 },
+  { code: '12', name: '千葉', row: 4, col: 7 },
+  { code: '13', name: '東京', row: 5, col: 6 },
+  { code: '14', name: '神奈川', row: 5, col: 7 },
+  { code: '15', name: '新潟', row: 4, col: 3 },
+  { code: '16', name: '富山', row: 5, col: 3 },
+  { code: '17', name: '石川', row: 5, col: 2 },
+  { code: '18', name: '福井', row: 6, col: 2 },
+  { code: '19', name: '山梨', row: 5, col: 5 },
+  { code: '20', name: '長野', row: 5, col: 4 },
+  { code: '21', name: '岐阜', row: 6, col: 3 },
+  { code: '22', name: '静岡', row: 6, col: 4 },
+  { code: '23', name: '愛知', row: 6, col: 5 },
+  { code: '24', name: '三重', row: 6, col: 6 },
+  { code: '25', name: '滋賀', row: 7, col: 2 },
+  { code: '26', name: '京都', row: 7, col: 3 },
+  { code: '27', name: '大阪', row: 7, col: 4 },
+  { code: '28', name: '兵庫', row: 7, col: 1 },
+  { code: '29', name: '奈良', row: 7, col: 5 },
+  { code: '30', name: '和歌山', row: 7, col: 6 },
+  { code: '31', name: '鳥取', row: 7, col: 7 },
+  { code: '32', name: '島根', row: 7, col: 8 },
+  { code: '33', name: '岡山', row: 8, col: 5 },
+  { code: '34', name: '広島', row: 8, col: 6 },
+  { code: '35', name: '山口', row: 8, col: 7 },
+  { code: '36', name: '徳島', row: 8, col: 3 },
+  { code: '37', name: '香川', row: 8, col: 2 },
+  { code: '38', name: '愛媛', row: 8, col: 1 },
+  { code: '39', name: '高知', row: 8, col: 4 },
+  { code: '40', name: '福岡', row: 9, col: 6 },
+  { code: '41', name: '佐賀', row: 9, col: 5 },
+  { code: '42', name: '長崎', row: 9, col: 4 },
+  { code: '43', name: '熊本', row: 9, col: 7 },
+  { code: '44', name: '大分', row: 9, col: 8 },
+  { code: '45', name: '宮崎', row: 10, col: 7 },
+  { code: '46', name: '鹿児島', row: 10, col: 6 },
+  { code: '47', name: '沖縄', row: 11, col: 7 }
+];
+
+async function loadVisitedPrefectures() {
+  if (!boardId) return;
+  const { data, error } = await sb
+    .from('visited_prefectures')
+    .select('*')
+    .eq('board_id', boardId);
+
+  if (error) {
+    console.error('Visited load error:', error);
+    return;
+  }
+
+  const selfSet = new Set();
+  const anySet = new Set();
+  data.forEach(row => {
+    if (row.visited) {
+      anySet.add(row.prefecture);
+      if (row.user_id === authorId) selfSet.add(row.prefecture);
+    }
+  });
+  visitedSelf = selfSet;
+  visitedAny = anySet;
+  renderMap();
+}
+
+async function toggleVisited(prefCode) {
+  const isVisited = visitedSelf.has(prefCode);
+  const { error } = await sb
+    .from('visited_prefectures')
+    .upsert({
+      board_id: boardId,
+      user_id: authorId,
+      prefecture: prefCode,
+      visited: !isVisited
+    }, { onConflict: 'board_id,user_id,prefecture' });
+
+  if (error) {
+    console.error('Visited toggle error:', error);
+  } else {
+    await loadVisitedPrefectures();
+  }
+}
+
+function renderMap() {
+  if (!jpGrid) return;
+  jpGrid.innerHTML = '';
+  const maxCol = Math.max(...PREF_TILES.map(t => t.col));
+  jpGrid.style.gridTemplateColumns = `repeat(${maxCol}, minmax(44px, 1fr))`;
+
+  PREF_TILES.forEach(tile => {
+    const tileEl = document.createElement('div');
+    tileEl.className = 'pref-tile';
+    tileEl.style.gridRow = tile.row;
+    tileEl.style.gridColumn = tile.col;
+    const selfHit = visitedSelf.has(tile.code);
+    const anyHit = visitedAny.has(tile.code);
+    if (selfHit) tileEl.classList.add('self');
+    else if (anyHit) tileEl.classList.add('any');
+    tileEl.textContent = tile.name;
+    tileEl.dataset.pref = tile.code;
+    tileEl.addEventListener('click', () => {
+      if (mapMode !== 'self') return; // 編集は自分モードのみ
+      toggleVisited(tile.code);
+    });
+    jpGrid.appendChild(tileEl);
+  });
+
+  if (mapModeLabel) {
+    mapModeLabel.textContent = mapMode === 'self' ? '自分' : '全体';
+  }
+}
+
 // ========== リアルタイム購読 ==========
 function subscribeToChanges() {
   if (channel) {
@@ -321,9 +455,9 @@ function render() {
         ${comments.length > 0 ? `<div class="comments">${comments.map(c => `<div class="comment"><span class="comment-author">${escapeHtml(c.author)}:</span> ${escapeHtml(c.text)}</div>`).join('')}</div>` : ''}
       </div>
       <div class="actions">
-        <button class="pill small" data-join="${item.id}">count me in!</button>
+        <button class="pill small" data-join="${item.id}">やりたい！</button>
         <button class="pill like small${alreadyLiked ? ' liked' : ''}" data-like="${item.id}" aria-label="いいね">&hearts;</button>
-        <button class="pill complete full" data-complete="${item.id}">Done</button>
+        <button class="pill complete full" data-complete="${item.id}">達成！</button>
         <button class="pill" data-comment="${item.id}">コメント</button>
       </div>`;
     todoListEl.appendChild(el);
@@ -473,6 +607,39 @@ if (saveMyIdBtn) {
 }
 loadWishes();
 subscribeToChanges();
+loadVisitedPrefectures();
+
+// メニュー切替
+if (menuToggle && menu && mainPage && mapPage) {
+  menuToggle.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+  menu.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-page]');
+    if (!target) return;
+    const page = target.dataset.page;
+    menu.classList.add('hidden');
+    if (page === 'map-page') {
+      mainPage.classList.add('hidden');
+      mapPage.classList.remove('hidden');
+    } else {
+      mapPage.classList.add('hidden');
+      mainPage.classList.remove('hidden');
+    }
+  });
+}
+
+// マップモード切替
+if (mapModeSelfBtn && mapModeAllBtn) {
+  mapModeSelfBtn.addEventListener('click', () => {
+    mapMode = 'self';
+    renderMap();
+  });
+  mapModeAllBtn.addEventListener('click', () => {
+    mapMode = 'all';
+    renderMap();
+  });
+}
 
 // ========== スプラッシュアニメーション ==========
 const splash = document.getElementById('splash');
