@@ -36,10 +36,12 @@ const mainPage = document.getElementById('main-page');
 const mapPage = document.getElementById('map-page');
 const menuToggle = document.getElementById('menu-toggle');
 const menu = document.getElementById('menu');
-const jpGrid = document.getElementById('jp-grid');
+const mapSvgContainer = document.getElementById('map-svg-container');
 const mapModeLabel = document.getElementById('map-mode-label');
 const mapModeSelfBtn = document.getElementById('map-mode-self');
 const mapModeAllBtn = document.getElementById('map-mode-all');
+
+let mapSvgRoot = null; // cached SVG root for the Japan map
 
 // ========== ユーティリティ ==========
 function escapeHtml(str) {
@@ -263,56 +265,33 @@ async function addComment(wishId, commentText, userName) {
   }
 }
 
-// ========== マップ用 ==========
-const PREF_TILES = [
-  { code: '01', name: '北海道', row: 1, col: 5 },
-  { code: '02', name: '青森', row: 2, col: 4 },
-  { code: '03', name: '岩手', row: 2, col: 5 },
-  { code: '04', name: '宮城', row: 2, col: 6 },
-  { code: '05', name: '秋田', row: 3, col: 4 },
-  { code: '06', name: '山形', row: 3, col: 5 },
-  { code: '07', name: '福島', row: 3, col: 6 },
-  { code: '08', name: '茨城', row: 3, col: 7 },
-  { code: '09', name: '栃木', row: 4, col: 6 },
-  { code: '10', name: '群馬', row: 4, col: 5 },
-  { code: '11', name: '埼玉', row: 4, col: 4 },
-  { code: '12', name: '千葉', row: 4, col: 7 },
-  { code: '13', name: '東京', row: 5, col: 6 },
-  { code: '14', name: '神奈川', row: 5, col: 7 },
-  { code: '15', name: '新潟', row: 4, col: 3 },
-  { code: '16', name: '富山', row: 5, col: 3 },
-  { code: '17', name: '石川', row: 5, col: 2 },
-  { code: '18', name: '福井', row: 6, col: 2 },
-  { code: '19', name: '山梨', row: 5, col: 5 },
-  { code: '20', name: '長野', row: 5, col: 4 },
-  { code: '21', name: '岐阜', row: 6, col: 3 },
-  { code: '22', name: '静岡', row: 6, col: 4 },
-  { code: '23', name: '愛知', row: 6, col: 5 },
-  { code: '24', name: '三重', row: 6, col: 6 },
-  { code: '25', name: '滋賀', row: 7, col: 2 },
-  { code: '26', name: '京都', row: 7, col: 3 },
-  { code: '27', name: '大阪', row: 7, col: 4 },
-  { code: '28', name: '兵庫', row: 7, col: 1 },
-  { code: '29', name: '奈良', row: 7, col: 5 },
-  { code: '30', name: '和歌山', row: 7, col: 6 },
-  { code: '31', name: '鳥取', row: 7, col: 7 },
-  { code: '32', name: '島根', row: 7, col: 8 },
-  { code: '33', name: '岡山', row: 8, col: 5 },
-  { code: '34', name: '広島', row: 8, col: 6 },
-  { code: '35', name: '山口', row: 8, col: 7 },
-  { code: '36', name: '徳島', row: 8, col: 3 },
-  { code: '37', name: '香川', row: 8, col: 2 },
-  { code: '38', name: '愛媛', row: 8, col: 1 },
-  { code: '39', name: '高知', row: 8, col: 4 },
-  { code: '40', name: '福岡', row: 9, col: 6 },
-  { code: '41', name: '佐賀', row: 9, col: 5 },
-  { code: '42', name: '長崎', row: 9, col: 4 },
-  { code: '43', name: '熊本', row: 9, col: 7 },
-  { code: '44', name: '大分', row: 9, col: 8 },
-  { code: '45', name: '宮崎', row: 10, col: 7 },
-  { code: '46', name: '鹿児島', row: 10, col: 6 },
-  { code: '47', name: '沖縄', row: 11, col: 7 }
-];
+// ========== マップ用（実SVG連携） ==========
+// SVGの都道府県ID（英名大文字）→ JISコード（"01"～"47"）のマッピング
+const CODE_BY_ID = {
+  HOKKAIDO:'01', AOMORI:'02', IWATE:'03', MIYAGI:'04', AKITA:'05', YAMAGATA:'06', FUKUSHIMA:'07',
+  IBARAKI:'08', TOCHIGI:'09', GUNMA:'10', SAITAMA:'11', CHIBA:'12', TOKYO:'13', KANAGAWA:'14',
+  NIIGATA:'15', TOYAMA:'16', ISHIKAWA:'17', FUKUI:'18', YAMANASHI:'19', NAGANO:'20', GIFU:'21',
+  SHIZUOKA:'22', AICHI:'23', MIE:'24', SHIGA:'25', KYOTO:'26', OSAKA:'27', HYOGO:'28', NARA:'29',
+  WAKAYAMA:'30', TOTTORI:'31', SHIMANE:'32', OKAYAMA:'33', HIROSHIMA:'34', YAMAGUCHI:'35',
+  TOKUSHIMA:'36', KAGAWA:'37', EHIME:'38', KOCHI:'39', FUKUOKA:'40', SAGA:'41', NAGASAKI:'42',
+  KUMAMOTO:'43', OITA:'44', MIYAZAKI:'45', KAGOSHIMA:'46', OKINAWA:'47'
+};
+const ID_BY_CODE = Object.fromEntries(Object.entries(CODE_BY_ID).map(([k,v]) => [v,k]));
+// 日本語名（JISコード→都道府県名）
+const JP_NAME_BY_CODE = {
+  '01':'北海道','02':'青森','03':'岩手','04':'宮城','05':'秋田','06':'山形','07':'福島',
+  '08':'茨城','09':'栃木','10':'群馬','11':'埼玉','12':'千葉','13':'東京','14':'神奈川',
+  '15':'新潟','16':'富山','17':'石川','18':'福井','19':'山梨','20':'長野','21':'岐阜',
+  '22':'静岡','23':'愛知','24':'三重','25':'滋賀','26':'京都','27':'大阪','28':'兵庫','29':'奈良',
+  '30':'和歌山','31':'鳥取','32':'島根','33':'岡山','34':'広島','35':'山口',
+  '36':'徳島','37':'香川','38':'愛媛','39':'高知','40':'福岡','41':'佐賀','42':'長崎',
+  '43':'熊本','44':'大分','45':'宮崎','46':'鹿児島','47':'沖縄'
+};
+function labelForId(id) {
+  const code = CODE_BY_ID[id];
+  if (!code) return id;
+  return JP_NAME_BY_CODE[code] || id;
+}
 
 async function loadVisitedPrefectures() {
   if (!boardId) return;
@@ -357,33 +336,81 @@ async function toggleVisited(prefCode) {
   }
 }
 
-function renderMap() {
-  if (!jpGrid) return;
-  jpGrid.innerHTML = '';
-  const maxCol = Math.max(...PREF_TILES.map(t => t.col));
-  jpGrid.style.gridTemplateColumns = `repeat(${maxCol}, minmax(44px, 1fr))`;
+async function ensureMapSvgLoaded() {
+  if (!mapSvgContainer) return null;
+  if (mapSvgRoot) return mapSvgRoot;
+  try {
+    const resp = await fetch('japan.svg');
+    if (!resp.ok) throw new Error(`SVG fetch failed: ${resp.status}`);
+    const svgText = await resp.text();
+    mapSvgContainer.innerHTML = svgText + '<div class="tooltip" id="map-tooltip"></div>';
+    const svg = mapSvgContainer.querySelector('svg');
+    if (!svg) throw new Error('SVG not found');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    mapSvgRoot = svg;
 
-  PREF_TILES.forEach(tile => {
-    const tileEl = document.createElement('div');
-    tileEl.className = 'pref-tile';
-    tileEl.style.gridRow = tile.row;
-    tileEl.style.gridColumn = tile.col;
-    const selfHit = visitedSelf.has(tile.code);
-    const anyHit = visitedAny.has(tile.code);
-    if (selfHit) tileEl.classList.add('self');
-    else if (anyHit) tileEl.classList.add('any');
-    tileEl.textContent = tile.name;
-    tileEl.dataset.pref = tile.code;
-    tileEl.addEventListener('click', () => {
-      if (mapMode !== 'self') return; // 編集は自分モードのみ
-      toggleVisited(tile.code);
+    const tooltip = document.getElementById('map-tooltip');
+    const paths = svg.querySelectorAll('path[id]');
+    paths.forEach(p => {
+      const id = p.id.trim().toUpperCase();
+      const code = CODE_BY_ID[id];
+      if (!code) return; // skip non-prefecture shapes
+      p.tabIndex = 0;
+      p.setAttribute('role', 'button');
+      p.setAttribute('aria-label', labelForId(id));
+      p.addEventListener('click', () => {
+        if (mapMode !== 'self') return;
+        toggleVisited(code);
+      });
+      p.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); if (mapMode === 'self') toggleVisited(code); }
+      });
+      p.addEventListener('mouseenter', (ev) => showMapTooltip(tooltip, labelForId(id), ev));
+      p.addEventListener('mousemove', (ev) => showMapTooltip(tooltip, labelForId(id), ev));
+      p.addEventListener('mouseleave', () => hideMapTooltip(tooltip));
     });
-    jpGrid.appendChild(tileEl);
-  });
-
-  if (mapModeLabel) {
-    mapModeLabel.textContent = mapMode === 'self' ? '自分' : '全体';
+  } catch (e) {
+    mapSvgContainer.innerHTML = `<div class="empty">地図の読み込みに失敗しました: ${e.message}</div>`;
   }
+  return mapSvgRoot;
+}
+
+function showMapTooltip(tooltip, text, ev) {
+  if (!tooltip) return;
+  const rect = mapSvgContainer.getBoundingClientRect();
+  tooltip.textContent = text;
+  tooltip.style.left = (ev.clientX - rect.left) + 'px';
+  tooltip.style.top = (ev.clientY - rect.top) + 'px';
+  tooltip.classList.add('show');
+}
+function hideMapTooltip(tooltip) { if (tooltip) tooltip.classList.remove('show'); }
+
+async function renderMap() {
+  if (mapModeLabel) mapModeLabel.textContent = mapMode === 'self' ? '自分' : '全体';
+  const svg = await ensureMapSvgLoaded();
+  if (!svg) return;
+  const paths = svg.querySelectorAll('path[id]');
+  paths.forEach(p => {
+    const id = p.id.trim().toUpperCase();
+    const code = CODE_BY_ID[id];
+    if (!code) return;
+    const selfHit = visitedSelf.has(code);
+    const anyHit = visitedAny.has(code);
+    p.classList.toggle('self', selfHit && mapMode === 'self');
+    p.classList.toggle('any', !selfHit && anyHit);
+    if (mapMode === 'all' && selfHit) {
+      // 自分が訪問していても全体表示では「any」に統一
+      p.classList.remove('self');
+      p.classList.add('any');
+    }
+    if (mapMode === 'self' && anyHit && !selfHit) {
+      // 自分表示時は自分優先で着色、それ以外はany
+      p.classList.add('any');
+    }
+    if (mapMode === 'self' && !anyHit) {
+      p.classList.remove('any');
+    }
+  });
 }
 
 // ========== リアルタイム購読 ==========
