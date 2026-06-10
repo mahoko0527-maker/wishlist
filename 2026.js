@@ -19,7 +19,6 @@ let visitedAny = new Set();
 const nameFilter = document.getElementById('name-filter');
 const whoInput = document.getElementById('who');
 const currentNameLabel = document.getElementById('current-name');
-const maxCountLabel = document.getElementById('max-count');
 
 const form = document.getElementById('wish-form');
 const titleInput = document.getElementById('title');
@@ -100,11 +99,27 @@ function updateMyIdUI() {
 
 // ========== データベース操作 ==========
 async function loadWishes() {
-  const { data, error } = await sb
-    .from('wishes')
-    .select('*')
-    .eq('board_id', boardId)
-    .order('created_at', { ascending: false });
+  // Exclude soft-deleted rows (deleted = true). If the column doesn't exist,
+  // fall back to selecting all rows — migration may be required.
+  let data, error;
+  try {
+    const res = await sb
+      .from('wishes')
+      .select('*')
+      .eq('board_id', boardId)
+      .or('deleted.eq.false,deleted.is.null')
+      .order('created_at', { ascending: false });
+    data = res.data; error = res.error;
+  } catch (e) {
+    // If the client library throws, fall back to a simple select and log.
+    console.warn('Fallback loadWishes due to error:', e.message || e);
+    const res = await sb
+      .from('wishes')
+      .select('*')
+      .eq('board_id', boardId)
+      .order('created_at', { ascending: false });
+    data = res.data; error = res.error;
+  }
 
   if (error) {
     console.error('Load error:', error);
@@ -139,7 +154,8 @@ async function addWish(title, note, who) {
     title,
     note,
     author: who,
-    done: false
+    done: false,
+    deleted: false
   });
 
   if (error) {
@@ -163,11 +179,18 @@ async function completeWish(id, feedback) {
 }
 
 async function deleteWish(id) {
-  const { error } = await sb.from('wishes').delete().eq('id', id);
-  if (error) {
-    console.error('Delete error:', error);
-  } else {
-    await loadWishes(); // 削除後に再読込
+  // Soft-delete: mark as deleted so data can be recovered later.
+  try {
+    const { error } = await sb.from('wishes').update({ deleted: true, deleted_at: new Date().toISOString() }).eq('id', id);
+    if (error) {
+      console.error('Soft-delete error:', error);
+      alert('削除に失敗しました。管理者にお問い合わせください。');
+    } else {
+      await loadWishes(); // 状態更新のため再読込
+    }
+  } catch (e) {
+    console.error('Soft-delete threw exception:', e);
+    alert('削除処理でエラーが発生しました。管理者にお問い合わせください。');
   }
 }
 
@@ -451,16 +474,7 @@ function render() {
     currentNameLabel.textContent = filterName === 'all' ? '全員' : filterName;
   }
   
-  // 「すべて」の場合は全員の合計上限、特定名の場合は100
-  let maxCount = MAX_ITEMS;
-  if (filterName === 'all') {
-    const uniqueNames = Array.from(new Set([...state.todo, ...state.done].map(i => i.author).filter(Boolean)));
-    maxCount = uniqueNames.length * MAX_ITEMS;
-  }
   todoCount.textContent = todoVisible.length;
-  if (maxCountLabel) {
-    maxCountLabel.textContent = maxCount;
-  }
   todoEmpty.style.display = todoVisible.length ? 'none' : 'block';
   doneEmpty.style.display = doneVisible.length ? 'none' : 'block';
 
