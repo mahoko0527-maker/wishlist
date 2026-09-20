@@ -1,95 +1,132 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The hundred ―2026</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f0e7">
+  <meta name="description" content="やりたいを集め、今年の自分が選ぶ。The Hundred は一年とともに変わる Wishlist です。">
+  <title>The Hundred — Yearly Wishlist</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="2026.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23294162'/%3E%3Ctext x='32' y='42' font-size='28' text-anchor='middle' fill='white' font-family='Arial'%3EW%3C/text%3E%3C/svg%3E">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div id="splash"><div class="splash-content">the hundred</div></div>
-  <header>
-    <div>
-      <h1>The hundred ―2026</h1>
-      <div class="meta">１００のやりたいことをみんなで共有しよう
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="badge"><span id="current-name">全員</span>: <span id="todo-count">0</span> / <span id="max-count">100</span></div>
-      <button id="menu-toggle" aria-label="メニュー">☰</button>
-      <div id="menu" class="menu hidden">
-        <button class="menu-item" data-page="main-page">リスト</button>
-        <button class="menu-item" data-page="map-page">マップ</button>
-      </div>
-    </div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#" data-view-link="home" aria-label="The Hundred ホーム"><span class="brand-mark">100</span><span>The Hundred</span></a>
+    <nav class="desktop-nav" aria-label="メインナビゲーション">
+      <button class="nav-link is-active" data-view-link="home">Home</button>
+      <button class="nav-link" data-view-link="season">Season update</button>
+      <button class="nav-link" data-view-link="review">Year review</button>
+    </nav>
+    <button class="icon-button menu-button" id="menu-button" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span></button>
   </header>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
+    <button data-view-link="home">Home</button><button data-view-link="season">Season update</button><button data-view-link="review">Year review</button>
+  </nav>
 
   <main>
-    <section id="main-page">
-      <div class="grid">
-        <div class="card">
-          <h2>今年やりたいことを追加</h2>
-          <form id="wish-form">
-            <input id="who" placeholder="ニックネーム" required maxlength="40" />
-            <input id="title" placeholder="例: NYに行く" required maxlength="80" />
-            <textarea id="note" placeholder="メモ（任意）" maxlength="240"></textarea>
-            <button type="submit">追加する</button>
-          </form>
-          <div class="muted" style="margin-top: 20px;">あなたのMyID（好きな英数字で作成。別端末でも同じIDを入れれば同一人物として扱います）</div>
-          <div id="myid-current" style="display:none;">
-            <div class="id-row">
-              <input id="myid-display" readonly>
-              <button type="button" class="pill" id="copy-myid">コピー</button>
-              <button type="button" class="pill" id="change-myid">変更</button>
-            </div>
-          </div>
-          <div id="myid-form">
-            <div class="id-row">
-              <input id="myid-input" placeholder="例: taro2026">
-              <button type="button" class="pill" id="save-myid">保存</button>
-            </div>
-          </div>
+    <section class="view is-active" id="view-home" data-view="home">
+      <div class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span id="current-season-label">AUTUMN</span> · <span id="current-year-label">2026</span></p>
+          <h1>やりたいを集めて、<br><em>今の自分</em><wbr>で選んでいく。</h1>
+          <p class="hero-lead">思いつきは、いつでも自由に。<br>今年選ぶものは、ときどき立ち止まって選び直す。</p>
         </div>
-
-        <div class="card">
-          <h2>やること</h2>
-          <div class="muted">名前で絞り込み</div>
-          <select id="name-filter"></select>
-          <div class="list" id="todo-list"></div>
-          <div class="empty" id="todo-empty">未登録です。まず追加しましょう。</div>
+        <div class="year-orbit" aria-label="今年選んだ Wish の数">
+          <svg viewBox="0 0 160 160" role="img" aria-hidden="true"><circle class="orbit-track" cx="80" cy="80" r="67"></circle><circle class="orbit-progress" id="orbit-progress" cx="80" cy="80" r="67"></circle></svg>
+          <div class="orbit-value"><strong id="selection-count">0</strong><span>/ 100</span><small>WISHES</small></div>
         </div>
+      </div>
 
-        <div class="card">
-          <h2>達成済み</h2>
-          <div class="list" id="done-list"></div>
-          <div class="empty" id="done-empty">まだありません。</div>
+      <section class="quick-add shell" aria-labelledby="quick-add-title">
+        <div><p class="section-kicker">CAPTURE A THOUGHT</p><h2 id="quick-add-title">いま、何をしてみたい？</h2></div>
+        <form id="quick-add-form" class="quick-add-form">
+          <label class="sr-only" for="quick-add-input">やりたいこと</label>
+          <input id="quick-add-input" maxlength="80" placeholder="やりたいかも、を一言で" autocomplete="off" required>
+          <button class="round-button" type="submit" aria-label="やりたいかもに追加">＋</button>
+        </form>
+        <p class="form-note">まだ選ばなくて大丈夫。タイトルだけで残せます。</p>
+      </section>
+
+      <section class="wish-section shell" aria-labelledby="selected-heading">
+        <div class="section-heading">
+          <div><p class="section-kicker">YOUR <span id="selected-year-label">2026</span></p><h2 id="selected-heading">今年、選んでいるもの</h2></div>
+          <p class="section-note">叶えるための To-do ではなく、<br>今年の自分が大切にしたいこと。</p>
+        </div>
+        <div class="wish-grid selected-grid" id="selected-list"></div>
+        <div class="empty-state" id="selected-empty"><span>01</span><p>今年の Wish はまだありません。</p><button class="text-button" data-view-link="season">Season update で選ぶ →</button></div>
+      </section>
+
+      <section class="wish-section candidate-section shell" aria-labelledby="candidate-heading">
+        <div class="section-heading">
+          <div><p class="section-kicker">MAYBE, SOMEDAY</p><h2 id="candidate-heading">やりたいかも</h2></div>
+          <p class="section-note">今は正式に選んでいなくても、<br>あなたの「やりたい」に変わりはない。</p>
+        </div>
+        <div class="candidate-list" id="candidate-list"></div>
+        <div class="empty-state compact" id="candidate-empty"><p>ふと思いついたら、上の入力欄へ。</p></div>
+      </section>
+    </section>
+
+    <section class="view" id="view-season" data-view="season">
+      <div class="page-intro shell narrow">
+        <button class="back-link" data-view-link="home">← Home</button><p class="eyebrow">SEASON UPDATE · <span id="season-page-label">AUTUMN</span></p>
+        <h1>次の季節へ、<br>何を持っていこう。</h1>
+        <p>全部を整理しなくて大丈夫です。今の自分を眺め、次の季節にも一緒にいたい Wish だけを選びます。</p>
+      </div>
+      <div class="season-layout shell">
+        <aside class="season-progress"><div class="season-dial"><strong id="season-number">03</strong><span>/ 04</span></div><p><span id="season-aside-label">AUTUMN</span><br>CHECK-IN</p><div class="season-line" id="season-line"><i></i><i></i><i></i><i></i></div></aside>
+        <div class="season-content">
+          <section aria-labelledby="carry-heading">
+            <div class="season-section-title"><span>01</span><div><h2 id="carry-heading">今年の Wish を見渡す</h2><p>次の季節に持っていくものを選んでください。</p></div></div>
+            <div class="season-choice-list" id="season-active-list"></div>
+          </section>
+          <section aria-labelledby="adopt-heading">
+            <div class="season-section-title"><span>02</span><div><h2 id="adopt-heading">いま選びたいものはある？</h2><p>「やりたいかも」から、今年の Wish に迎えられます。</p></div></div>
+            <div class="season-choice-list" id="season-candidate-list"></div>
+          </section>
+          <div class="season-save-bar"><div><strong id="season-selected-count">0</strong><span>件を次の季節へ</span></div><button class="primary-button" id="save-season">この選択で季節をはじめる</button></div>
         </div>
       </div>
     </section>
 
-    <section id="map-page" class="hidden">
-      <div class="card">
-        <h2>訪問地マップ（都道府県）</h2>
-        <div class="muted">クリックで訪問/未訪問を切替（保存されます）。表示モード: <span id="map-mode-label">自分</span></div>
-        <div class="map-controls">
-          <button class="pill" id="map-mode-self">自分</button>
-          <button class="pill" id="map-mode-all">全体</button>
-        </div>
-        <div id="map-svg-container" class="map-svg-container"></div>
-        <div class="legend">
-          <span class="legend-dot self"></span>自分　
-          <span class="legend-dot any"></span>誰か訪問
-        </div>
+    <section class="view" id="view-review" data-view="review">
+      <div class="review-hero"><div class="shell narrow review-title-wrap">
+        <button class="back-link light" data-view-link="home">← Home</button><p class="eyebrow">YOUR YEAR · <span id="review-year-label">2026</span></p>
+        <h1>叶えた数より、<br>ここに残ったもの。</h1><p>Wish と過ごした時間が、人や場所や、次の「やりたい」につながりました。</p>
+      </div></div>
+      <div class="review-body shell">
+        <div class="review-stats" id="review-stats"></div>
+        <section class="review-section" aria-labelledby="footprints-heading">
+          <div class="review-section-heading"><p>01 · FOOTPRINTS</p><h2 id="footprints-heading">今年の足跡</h2></div>
+          <div class="footprint-layout"><div class="achieved-timeline" id="achieved-timeline"></div><div class="place-cloud" id="place-cloud"></div></div>
+        </section>
+        <section class="review-section possibilities" aria-labelledby="possibilities-heading">
+          <div class="review-section-heading"><p>02 · POSSIBILITIES</p><h2 id="possibilities-heading">ここから広がったこと</h2></div><div class="branch-map" id="branch-map"></div>
+        </section>
+        <section class="review-section quiet-section" aria-labelledby="letgo-heading">
+          <div class="review-section-heading"><p>03 · WHAT YOU LET GO</p><h2 id="letgo-heading">いったん、選ばなかったこと</h2></div><div class="letgo-list" id="letgo-list"></div>
+        </section>
       </div>
     </section>
   </main>
 
-  <!-- キャッシュを避けるためバージョン付きで読み込み -->
-  <script src="2026.js?v=5"></script>
+  <footer class="site-footer shell"><p>The Hundred</p><p>「やりたい」の変化も、あなたの一年。</p><button id="reset-demo" class="footer-link">デモデータをリセット</button></footer>
+
+  <dialog class="detail-dialog" id="detail-dialog"><div class="dialog-shell"><button class="dialog-close" data-close-dialog aria-label="閉じる">×</button><div id="detail-content"></div></div></dialog>
+  <dialog class="complete-dialog" id="complete-dialog">
+    <form method="dialog" id="complete-form" class="complete-card">
+      <button class="dialog-close" value="cancel" aria-label="閉じる">×</button><div class="celebration-mark">✦</div><p class="section-kicker">A FOOTPRINT ADDED</p><h2>叶った！</h2>
+      <p class="complete-title" id="complete-title"></p><p class="complete-lead">これで記録は完了です。残しておきたいことがあれば、あとから少しだけ。</p><input type="hidden" id="complete-wish-id">
+      <label>場所 <span>任意</span><input id="complete-place" maxlength="60" placeholder="例：モンゴル・ウランバートル"></label>
+      <label>一緒に叶えた人・出会った人 <span>任意</span><input id="complete-person" maxlength="60" placeholder="例：旅先で出会った家族"></label>
+      <label>ひとこと <span>任意</span><textarea id="complete-note" maxlength="240" placeholder="今の気持ちを、そのまま"></textarea></label>
+      <label>ここから生まれた「やりたい」 <span>任意</span><input id="complete-branch" maxlength="80" placeholder="例：冬のモンゴルにも行きたい"></label>
+      <button class="primary-button" value="default" type="submit">この足跡を残す</button><button class="skip-button" value="default" type="submit" data-skip-complete>何も足さずに閉じる</button>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="2026.js"></script>
 </body>
 </html>
