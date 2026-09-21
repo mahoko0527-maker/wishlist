@@ -76,12 +76,13 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
 }
 
 .theme-plain .home-toolbar {
-  display: flex;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: max-content;
+  justify-content: center;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
   min-height: 0;
-  padding-block: 44px 18px;
+  padding-block: 48px 28px;
   border-bottom: 0;
 }
 
@@ -96,6 +97,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   font-weight: 600;
   line-height: 1;
   letter-spacing: -.04em;
+  text-align: center;
   pointer-events: auto;
   user-select: auto;
 }
@@ -103,10 +105,11 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
 .theme-plain .annual-count {
   position: static;
   z-index: auto;
-  width: 54px;
-  height: 54px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   gap: 3px;
   padding: 0;
   border: 1px solid var(--plain-line);
@@ -121,6 +124,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   color: var(--plain-muted);
   font-size: 11px;
   font-weight: 500;
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -407,9 +411,9 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
 @media (max-width: 680px) {
   .theme-plain #view-home { --home-gutter: 15px; }
 
-  .theme-plain .home-toolbar { padding-block: 32px 14px; }
+  .theme-plain .home-toolbar { gap: 16px; padding-block: 36px 22px; }
   .theme-plain .home-toolbar h1 { font-size: 42px; }
-  .theme-plain .annual-count { width: 48px; height: 48px; }
+  .theme-plain .annual-count { width: 100%; height: auto; }
 
   .theme-plain .quick-add {
     grid-template-columns: 1fr;
