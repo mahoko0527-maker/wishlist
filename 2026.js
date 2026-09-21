@@ -135,6 +135,7 @@ function renderHome() {
   const allYear = yearSelections();
   $("#selection-count").textContent = allYear.length;
   $("#current-year-label").textContent = YEAR;
+  $("#selected-year-label").textContent = YEAR;
 
   $("#selected-list").innerHTML = selected.map(({ want, status }, index) => {
     const branches = branchesOf(want.id).length;

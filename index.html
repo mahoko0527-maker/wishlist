@@ -8,7 +8,7 @@
   <title>The Hundred — Yearly Wishlist</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=Noto+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="2026.css">
 </head>
 <body>
@@ -46,7 +46,8 @@
 
       <section class="wish-section shell" aria-labelledby="selected-heading">
         <div class="section-heading">
-          <h2 id="selected-heading">WISHES</h2>
+          <p class="editorial-label">SELECTED · <span id="selected-year-label">2026</span></p>
+          <h2 id="selected-heading">今年選んだもの</h2>
         </div>
         <div class="wish-grid selected-grid" id="selected-list"></div>
         <div class="empty-state" id="selected-empty"></div>
@@ -54,7 +55,8 @@
 
       <section class="wish-section candidate-section shell" aria-labelledby="candidate-heading">
         <div class="section-heading">
-          <h2 id="candidate-heading">MAYBE</h2>
+          <p class="editorial-label">MAYBE</p>
+          <h2 id="candidate-heading">やりたいこと</h2>
         </div>
         <div class="candidate-list" id="candidate-list"></div>
         <div class="empty-state compact" id="candidate-empty"><button class="text-button" id="load-demo">デモを見る</button></div>
