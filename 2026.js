@@ -156,9 +156,7 @@ function renderHome() {
     </article>`;
   }).join("");
   $("#selected-empty").hidden = selected.length > 0;
-  $("#selected-empty-copy").textContent = pool.length ? "「やりたいかも」の＋から選べます。" : "今年のWishはまだありません。";
   $("#candidate-empty").hidden = pool.length > 0;
-  $("#candidate-empty-copy").textContent = state.wants.length ? "新しい「やりたい」は上から追加できます。" : "最初の「やりたい」を追加してみてください。";
   $("#load-demo").hidden = state.wants.length > 0;
 }
 

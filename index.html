@@ -30,34 +30,34 @@
     <section class="view is-active" id="view-home" data-view="home">
       <div class="home-toolbar shell">
         <h1 id="current-year-label">2026</h1>
-        <button class="annual-count" data-view-link="review" aria-label="今年選んだWishの履歴を見る">
-          <strong id="selection-count">0</strong><span>/ 100</span><small>今年選んだ数</small>
+        <button class="annual-count" data-view-link="review" aria-label="View this year's Wish history">
+          <strong id="selection-count">0</strong><span>/ 100</span>
         </button>
       </div>
 
       <section class="quick-add shell" aria-labelledby="quick-add-title">
-        <h2 id="quick-add-title">いま、何をしてみたい？</h2>
+        <h2 id="quick-add-title">ADD A WISH</h2>
         <form id="quick-add-form" class="quick-add-form">
           <label class="sr-only" for="quick-add-input">やりたいこと</label>
-          <input id="quick-add-input" maxlength="80" placeholder="例：夜行列車で知らない町へ行く" autocomplete="off" required>
+          <input id="quick-add-input" maxlength="80" placeholder="e.g. 夜行列車で知らない町へ行く" autocomplete="off" required>
           <button class="round-button" type="submit" aria-label="やりたいかもに追加">＋</button>
         </form>
       </section>
 
       <section class="wish-section shell" aria-labelledby="selected-heading">
         <div class="section-heading">
-          <h2 id="selected-heading">今年、選んでいるもの</h2>
+          <h2 id="selected-heading">WISHES</h2>
         </div>
         <div class="wish-grid selected-grid" id="selected-list"></div>
-        <div class="empty-state" id="selected-empty"><p id="selected-empty-copy">今年のWishはまだありません。</p></div>
+        <div class="empty-state" id="selected-empty"></div>
       </section>
 
       <section class="wish-section candidate-section shell" aria-labelledby="candidate-heading">
         <div class="section-heading">
-          <h2 id="candidate-heading">やりたいかも</h2>
+          <h2 id="candidate-heading">MAYBE</h2>
         </div>
         <div class="candidate-list" id="candidate-list"></div>
-        <div class="empty-state compact" id="candidate-empty"><p id="candidate-empty-copy">最初の「やりたい」を追加してみてください。</p><button class="text-button" id="load-demo">デモを見る</button></div>
+        <div class="empty-state compact" id="candidate-empty"><button class="text-button" id="load-demo">デモを見る</button></div>
       </section>
     </section>
 
