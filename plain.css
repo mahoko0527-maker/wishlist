@@ -1,8 +1,8 @@
 /* PLAIN — the quiet baseline theme. EDITORIAL remains in 2026.css. */
 
 body.theme-plain {
-  --plain-bg: #f8f6ef;
-  --plain-surface: #fffefa;
+  --plain-bg: #faf9f5;
+  --plain-surface: rgba(255, 255, 255, .62);
   --plain-ink: #17212b;
   --plain-muted: #707b86;
   --plain-line: #dfe1df;
@@ -22,7 +22,7 @@ body.theme-plain:has(#view-home.is-active) .site-header {
   height: 68px;
   padding-inline: max(20px, 4vw);
   border-color: var(--plain-line);
-  background: rgba(255, 254, 250, .94);
+  background: rgba(255, 255, 252, .9);
   backdrop-filter: blur(16px);
 }
 
@@ -93,10 +93,10 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   color: var(--plain-ink);
   opacity: 1;
   font-family: var(--jp);
-  font-size: clamp(40px, 4.6vw, 62px);
+  font-size: clamp(48px, 5.4vw, 72px);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: -.04em;
+  letter-spacing: .012em;
   text-align: center;
   pointer-events: auto;
   user-select: auto;
@@ -137,7 +137,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   border: 1px solid var(--plain-line);
   border-radius: 16px;
   background: var(--plain-surface);
-  box-shadow: 0 8px 28px rgba(31, 38, 35, .045);
+  box-shadow: 0 4px 18px rgba(31, 38, 35, .025);
 }
 
 .theme-plain .quick-add h2 {
@@ -239,14 +239,14 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   border: 1px solid var(--plain-line);
   border-radius: 16px;
   background: var(--plain-surface);
-  box-shadow: 0 8px 26px rgba(31, 38, 35, .045);
+  box-shadow: 0 4px 16px rgba(31, 38, 35, .025);
   transform: none;
 }
 
 .theme-plain .wish-card:hover {
   border-color: #cfd4d8;
   background: var(--plain-surface);
-  box-shadow: 0 12px 30px rgba(31, 38, 35, .07);
+  box-shadow: 0 7px 20px rgba(31, 38, 35, .045);
   transform: translateY(-2px);
 }
 
@@ -316,7 +316,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   border: 1px solid var(--plain-line);
   border-radius: 16px;
   background: var(--plain-surface);
-  box-shadow: 0 8px 26px rgba(31, 38, 35, .04);
+  box-shadow: 0 4px 16px rgba(31, 38, 35, .022);
   transform: none;
 }
 
@@ -324,7 +324,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   padding: 20px;
   border-color: #cfd4d8;
   background: var(--plain-surface);
-  box-shadow: 0 12px 30px rgba(31, 38, 35, .065);
+  box-shadow: 0 7px 20px rgba(31, 38, 35, .042);
 }
 
 .theme-plain .candidate-row .candidate-index {
@@ -403,6 +403,11 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   color: var(--plain-muted);
 }
 
+.theme-plain .site-footer p:first-child {
+  color: var(--plain-ink);
+  font-family: var(--jp);
+}
+
 @media (max-width: 980px) {
   .theme-plain .wish-grid,
   .theme-plain .candidate-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -412,7 +417,7 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   .theme-plain #view-home { --home-gutter: 15px; }
 
   .theme-plain .home-toolbar { gap: 16px; padding-block: 36px 22px; }
-  .theme-plain .home-toolbar h1 { font-size: 42px; }
+  .theme-plain .home-toolbar h1 { font-size: 48px; }
   .theme-plain .annual-count { width: 100%; height: auto; }
 
   .theme-plain .quick-add {

@@ -1,5 +1,8 @@
 const YEAR = new Date().getFullYear();
 const SEASONS = ["WINTER", "SPRING", "SUMMER", "AUTUMN"];
+const PAGE_PARAMS = new URLSearchParams(location.search);
+
+document.body.classList.toggle("theme-plain-dark", PAGE_PARAMS.get("theme") !== "plain-light");
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -459,5 +462,5 @@ $("#detail-dialog").addEventListener("click", event => {
 });
 
 renderAll();
-const requestedView = new URLSearchParams(location.search).get("view");
+const requestedView = PAGE_PARAMS.get("view");
 if (requestedView) setView(requestedView);

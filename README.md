@@ -24,7 +24,7 @@
 
 ビルドは不要です。`index.html` をブラウザで開いてください。初回は空の状態から始まり、任意でデモデータを読み込めます。
 
-Homeの基準テーマは `plain.css` の `PLAIN` です。`2026.css` には比較用のEDITORIAL表現を残し、`body.theme-plain` と後読みのスタイルでPLAINを適用しています。
+Homeの基準テーマは `PLAIN` のcharcoal版です。通常URLでは `plain-dark.css` を適用し、`?theme=plain-light` を付けると `plain.css` の白背景版を比較できます。データと機能は両テーマで共通です。`2026.css` には比較用のEDITORIAL表現も残しています。
 
 データは `storage.js` の保存アダプターを通してブラウザの `localStorage` に保存されます。以前のversion 2形式が見つかった場合は、WantとSelectionを維持したまま、状態上書き型からイベント履歴型へ自動移行します。
 
