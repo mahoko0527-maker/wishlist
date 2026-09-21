@@ -28,65 +28,56 @@
 
   <main>
     <section class="view is-active" id="view-home" data-view="home">
-      <div class="hero shell">
-        <div class="hero-copy">
-          <p class="eyebrow"><span id="current-season-label">AUTUMN</span> · <span id="current-year-label">2026</span></p>
-          <h1>やりたいを集めて、<br><em>今の自分</em><wbr>で選んでいく。</h1>
-          <p class="hero-lead">思いつきは、いつでも自由に。<br>今年選ぶものは、ときどき立ち止まって選び直す。</p>
-        </div>
-        <div class="year-orbit" aria-label="今年選んだ Wish の数">
-          <svg viewBox="0 0 160 160" role="img" aria-hidden="true"><circle class="orbit-track" cx="80" cy="80" r="67"></circle><circle class="orbit-progress" id="orbit-progress" cx="80" cy="80" r="67"></circle></svg>
-          <div class="orbit-value"><strong id="selection-count">0</strong><span>/ 100</span><small>WISHES</small></div>
-        </div>
+      <div class="home-toolbar shell">
+        <h1 id="current-year-label">2026</h1>
+        <button class="annual-count" data-view-link="review" aria-label="今年選んだWishの履歴を見る">
+          <strong id="selection-count">0</strong><span>/ 100</span><small>今年選んだ数</small>
+        </button>
       </div>
 
       <section class="quick-add shell" aria-labelledby="quick-add-title">
-        <div><p class="section-kicker">CAPTURE A THOUGHT</p><h2 id="quick-add-title">いま、何をしてみたい？</h2></div>
+        <h2 id="quick-add-title">いま、何をしてみたい？</h2>
         <form id="quick-add-form" class="quick-add-form">
           <label class="sr-only" for="quick-add-input">やりたいこと</label>
-          <input id="quick-add-input" maxlength="80" placeholder="やりたいかも、を一言で" autocomplete="off" required>
+          <input id="quick-add-input" maxlength="80" placeholder="例：夜行列車で知らない町へ行く" autocomplete="off" required>
           <button class="round-button" type="submit" aria-label="やりたいかもに追加">＋</button>
         </form>
-        <p class="form-note">まだ選ばなくて大丈夫。タイトルだけで残せます。</p>
       </section>
 
       <section class="wish-section shell" aria-labelledby="selected-heading">
         <div class="section-heading">
-          <div><p class="section-kicker">YOUR <span id="selected-year-label">2026</span></p><h2 id="selected-heading">今年、選んでいるもの</h2></div>
-          <p class="section-note">叶えるための To-do ではなく、<br>今年の自分が大切にしたいこと。</p>
+          <h2 id="selected-heading">今年、選んでいるもの</h2>
         </div>
         <div class="wish-grid selected-grid" id="selected-list"></div>
-        <div class="empty-state" id="selected-empty"><span>01</span><p>今年の Wish はまだありません。</p><button class="text-button" data-view-link="season">Season update で選ぶ →</button></div>
+        <div class="empty-state" id="selected-empty"><p id="selected-empty-copy">今年のWishはまだありません。</p></div>
       </section>
 
       <section class="wish-section candidate-section shell" aria-labelledby="candidate-heading">
         <div class="section-heading">
-          <div><p class="section-kicker">MAYBE, SOMEDAY</p><h2 id="candidate-heading">やりたいかも</h2></div>
-          <p class="section-note">今は正式に選んでいなくても、<br>あなたの「やりたい」に変わりはない。</p>
+          <h2 id="candidate-heading">やりたいかも</h2>
         </div>
         <div class="candidate-list" id="candidate-list"></div>
-        <div class="empty-state compact" id="candidate-empty"><p>ふと思いついたら、上の入力欄へ。</p></div>
+        <div class="empty-state compact" id="candidate-empty"><p id="candidate-empty-copy">最初の「やりたい」を追加してみてください。</p><button class="text-button" id="load-demo">デモを見る</button></div>
       </section>
     </section>
 
     <section class="view" id="view-season" data-view="season">
       <div class="page-intro shell narrow">
-        <button class="back-link" data-view-link="home">← Home</button><p class="eyebrow">SEASON UPDATE · <span id="season-page-label">AUTUMN</span></p>
-        <h1>次の季節へ、<br>何を持っていこう。</h1>
-        <p>全部を整理しなくて大丈夫です。今の自分を眺め、次の季節にも一緒にいたい Wish だけを選びます。</p>
+        <button class="back-link" data-view-link="home">← Home</button><p class="view-meta"><span id="season-page-label">AUTUMN</span> · <span id="season-year-label">2026</span></p>
+        <h1>次の季節にも、<br>これを選ぶ？</h1>
       </div>
       <div class="season-layout shell">
         <aside class="season-progress"><div class="season-dial"><strong id="season-number">03</strong><span>/ 04</span></div><p><span id="season-aside-label">AUTUMN</span><br>CHECK-IN</p><div class="season-line" id="season-line"><i></i><i></i><i></i><i></i></div></aside>
         <div class="season-content">
           <section aria-labelledby="carry-heading">
-            <div class="season-section-title"><span>01</span><div><h2 id="carry-heading">今年の Wish を見渡す</h2><p>次の季節に持っていくものを選んでください。</p></div></div>
+            <div class="season-section-title"><span>01</span><div><h2 id="carry-heading">今年のWish</h2></div></div>
             <div class="season-choice-list" id="season-active-list"></div>
           </section>
           <section aria-labelledby="adopt-heading">
-            <div class="season-section-title"><span>02</span><div><h2 id="adopt-heading">いま選びたいものはある？</h2><p>「やりたいかも」から、今年の Wish に迎えられます。</p></div></div>
+            <div class="season-section-title"><span>02</span><div><h2 id="adopt-heading">やりたいかもから選ぶ</h2></div></div>
             <div class="season-choice-list" id="season-candidate-list"></div>
           </section>
-          <div class="season-save-bar"><div><strong id="season-selected-count">0</strong><span>件を次の季節へ</span></div><button class="primary-button" id="save-season">この選択で季節をはじめる</button></div>
+          <div class="season-save-bar"><div><strong id="season-selected-count">0</strong><span>件を次の季節へ</span></div><button class="primary-button" id="save-season">更新する</button></div>
         </div>
       </div>
     </section>
@@ -112,7 +103,7 @@
     </section>
   </main>
 
-  <footer class="site-footer shell"><p>The Hundred</p><p>「やりたい」の変化も、あなたの一年。</p><button id="reset-demo" class="footer-link">デモデータをリセット</button></footer>
+  <footer class="site-footer shell"><p>The Hundred</p><button id="reset-demo" class="footer-link">すべてのデータを消去</button></footer>
 
   <dialog class="detail-dialog" id="detail-dialog"><div class="dialog-shell"><button class="dialog-close" data-close-dialog aria-label="閉じる">×</button><div id="detail-content"></div></div></dialog>
   <dialog class="complete-dialog" id="complete-dialog">
@@ -127,6 +118,7 @@
     </form>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="storage.js"></script>
   <script src="2026.js"></script>
 </body>
 </html>
