@@ -7,7 +7,9 @@ body.theme-plain.theme-plain-dark:has(#view-home.is-active) {
   --plain-muted: #9ba2aa;
   --plain-line: rgba(255, 255, 255, .12);
   --plain-accent: #d4e0ea;
-  --plain-focus: #bed8ea;
+  --plain-focus: #c8cdd1;
+  --plain-focus-line: rgba(255, 255, 255, .42);
+  --plain-focus-wash: rgba(255, 255, 255, .035);
   color: var(--plain-ink);
   background: var(--plain-bg);
 }

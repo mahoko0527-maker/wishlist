@@ -7,7 +7,9 @@ body.theme-plain {
   --plain-muted: #707b86;
   --plain-line: #dfe1df;
   --plain-accent: #263f58;
-  --plain-focus: #49718d;
+  --plain-focus: #66717b;
+  --plain-focus-line: #aab2b8;
+  --plain-focus-wash: rgba(255, 255, 255, .3);
   --plain-card-radius: 16px;
   --plain-card-gap: 20px;
   color: var(--plain-ink);
@@ -73,10 +75,11 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   align-items: center;
 }
 
-.theme-plain #view-home :is(button, input, [role="button"]):focus-visible,
+.theme-plain #view-home :is(button, [role="button"]):focus-visible,
 .theme-plain .site-header :is(a, button):focus-visible,
-.theme-plain .mobile-nav button:focus-visible {
-  outline: 2px solid var(--plain-focus);
+.theme-plain .mobile-nav button:focus-visible,
+body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
+  outline: 1px solid var(--plain-focus);
   outline-offset: 3px;
 }
 
@@ -188,6 +191,11 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
 .theme-plain .quick-add-form {
   gap: 12px;
   border-color: var(--plain-line);
+  transition: border-color .18s ease;
+}
+
+.theme-plain .quick-add-form:has(input:focus) {
+  border-color: var(--plain-focus-line);
 }
 
 .theme-plain .quick-add-form input {
@@ -195,6 +203,17 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   color: var(--plain-ink);
   font-family: var(--jp);
   font-size: 15px;
+  transition: background-color .18s ease;
+}
+
+.theme-plain #view-home .quick-add-form input:focus {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  background: var(--plain-focus-wash);
+}
+
+.theme-plain #view-home .quick-add-form input:focus-visible {
+  box-shadow: inset 0 -1px 0 var(--plain-focus-line);
 }
 
 .theme-plain .quick-add-form input::placeholder { color: #a2a7ab; }
@@ -474,4 +493,11 @@ body.theme-plain:has(#view-home.is-active) .nav-link {
   .theme-plain .home-toolbar { gap: 8px; }
   .theme-plain .home-toolbar h1 { font-size: 36px; }
   .theme-plain .quick-add { padding: 14px 18px; }
+}
+
+@media (forced-colors: active) {
+  .theme-plain #view-home .quick-add-form input:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
 }
