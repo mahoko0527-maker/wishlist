@@ -30,21 +30,23 @@
 
   <main>
     <section class="view is-active" id="view-home" data-view="home">
-      <div class="home-toolbar shell">
-        <h1 id="current-year-label">2026</h1>
-        <button class="annual-count" data-view-link="review" aria-label="View this year's Wish history">
-          <strong id="selection-count">0</strong><span>/ 100</span>
-        </button>
-      </div>
+      <div class="home-hero">
+        <div class="home-toolbar shell">
+          <h1 id="current-year-label">2026</h1>
+          <button class="annual-count" data-view-link="review" aria-label="View this year's Wish history">
+            <strong id="selection-count">0</strong><span>/ 100</span>
+          </button>
+        </div>
 
-      <section class="quick-add shell" aria-labelledby="quick-add-title">
-        <h2 id="quick-add-title">ADD A WISH</h2>
-        <form id="quick-add-form" class="quick-add-form">
-          <label class="sr-only" for="quick-add-input">やりたいこと</label>
-          <input id="quick-add-input" maxlength="80" placeholder="e.g. 夜行列車で知らない町へ行く" autocomplete="off" required>
-          <button class="round-button" type="submit" aria-label="やりたいかもに追加">＋</button>
-        </form>
-      </section>
+        <section class="quick-add shell" aria-labelledby="quick-add-title">
+          <h2 id="quick-add-title">ADD A WISH</h2>
+          <form id="quick-add-form" class="quick-add-form">
+            <label class="sr-only" for="quick-add-input">やりたいこと</label>
+            <input id="quick-add-input" maxlength="80" placeholder="e.g. 夜行列車で知らない町へ行く" autocomplete="off" required>
+            <button class="round-button" type="submit" aria-label="やりたいかもに追加">＋</button>
+          </form>
+        </section>
+      </div>
 
       <section class="wish-section shell" aria-labelledby="selected-heading">
         <div class="section-heading">
