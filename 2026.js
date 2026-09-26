@@ -275,20 +275,20 @@ function openDetail(wantId) {
         ${!selection ? `<button class="primary-button" data-select-wish="${want.id}">今年のWishに選ぶ</button>` : ""}
         ${status === "active" ? `<button class="primary-button" data-complete-wish="${want.id}">叶った！</button>` : ""}
         ${status === "let_go" ? `<button class="primary-button" data-reselect-wish="${want.id}">もう一度選ぶ</button>` : ""}
-        <details class="detail-more">
+        ${status === "active" ? `<details class="detail-more">
           <summary aria-label="その他の操作">…</summary>
-          <div class="detail-menu">
-            <button data-edit-memo="${want.id}">メモを編集</button>
-            ${status === "active" ? `<button data-letgo-wish="${want.id}">いったん手放す</button>` : ""}
-          </div>
-        </details>
+          <div class="detail-menu"><button data-letgo-wish="${want.id}">いったん手放す</button></div>
+        </details>` : ""}
       </div>
     </header>
 
     <section class="detail-section detail-memo" aria-labelledby="detail-memo-heading">
       <p class="detail-kicker">MEMO</p>
-      <h3 id="detail-memo-heading">メモ</h3>
-      ${want.memo ? `<p class="detail-prose">${escapeHtml(want.memo)}</p>` : ""}
+      <div class="detail-section-heading">
+        <h3 id="detail-memo-heading">メモ</h3>
+        <button class="detail-edit-link" data-edit-memo="${want.id}">EDIT</button>
+      </div>
+      ${want.memo ? `<p class="detail-prose" data-memo-copy>${escapeHtml(want.memo)}</p>` : ""}
       <form class="detail-edit-form" data-memo-form="${want.id}" data-memo-editor hidden>
         <textarea maxlength="240" aria-label="メモ">${escapeHtml(want.memo || "")}</textarea>
         <button type="submit">保存</button>
@@ -457,8 +457,10 @@ document.addEventListener("click", event => {
     const editor = $("[data-memo-editor]", $("#detail-content"));
     if (editor) {
       editor.hidden = false;
+      const memoCopy = $("[data-memo-copy]", $("#detail-content"));
+      if (memoCopy) memoCopy.hidden = true;
+      editMemo.hidden = true;
       $("textarea", editor)?.focus();
-      editMemo.closest("details")?.removeAttribute("open");
     }
   }
   const revealForm = event.target.closest("[data-reveal-form]");

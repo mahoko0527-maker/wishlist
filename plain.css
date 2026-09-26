@@ -640,6 +640,33 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   letter-spacing: .02em;
 }
 
+.theme-plain .detail-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.theme-plain .detail-section-heading h3 { margin: 0; }
+
+.theme-plain .detail-edit-link {
+  min-width: 44px;
+  min-height: 32px;
+  padding: 5px 0 5px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-align: right;
+  cursor: pointer;
+}
+
+.theme-plain .detail-edit-link:hover { color: var(--plain-ink); }
+
 .theme-plain .detail-section .detail-prose,
 .theme-plain .detail-afterword {
   margin: 0;
