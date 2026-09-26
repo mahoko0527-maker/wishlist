@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f0e7">
+  <meta name="theme-color" content="#191b1f">
   <meta name="description" content="やりたいを集め、今年の自分が選ぶ。The Hundred は一年とともに変わる Wishlist です。">
   <title>The Hundred — Yearly Wishlist</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=Noto+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="2026.css">
-  <link rel="stylesheet" href="plain.css">
-  <link rel="stylesheet" href="plain-dark.css">
+  <link rel="stylesheet" href="2026.css?v=plain-3">
+  <link rel="stylesheet" href="plain.css?v=plain-3">
+  <link rel="stylesheet" href="plain-dark.css?v=plain-3">
 </head>
 <body class="theme-plain theme-plain-dark">
   <div class="grain" aria-hidden="true"></div>
@@ -69,8 +69,8 @@
 
     <section class="view" id="view-season" data-view="season">
       <div class="page-intro shell narrow">
-        <button class="back-link" data-view-link="home">← Home</button><p class="view-meta"><span id="season-page-label">AUTUMN</span> · <span id="season-year-label">2026</span></p>
-        <h1>次の季節にも、<br>これを選ぶ？</h1>
+        <button class="back-link" data-view-link="home">← HOME</button><p class="view-meta"><span id="season-page-label">AUTUMN</span> · <span id="season-year-label">2026</span></p>
+        <h1>次の季節にも<br>持っていくもの</h1>
       </div>
       <div class="season-layout shell">
         <aside class="season-progress"><div class="season-dial"><strong id="season-number">03</strong><span>/ 04</span></div><p><span id="season-aside-label">AUTUMN</span><br>CHECK-IN</p><div class="season-line" id="season-line"><i></i><i></i><i></i><i></i></div></aside>
@@ -90,20 +90,27 @@
 
     <section class="view" id="view-review" data-view="review">
       <div class="review-hero"><div class="shell narrow review-title-wrap">
-        <button class="back-link light" data-view-link="home">← Home</button><p class="eyebrow">YOUR YEAR · <span id="review-year-label">2026</span></p>
-        <h1>叶えた数より、<br>ここに残ったもの。</h1><p>Wish と過ごした時間が、人や場所や、次の「やりたい」につながりました。</p>
+        <button class="back-link light" data-view-link="home">← HOME</button><p class="eyebrow">YOUR YEAR · <span id="review-year-label">2026</span></p>
+        <h1>今年の軌跡</h1>
       </div></div>
       <div class="review-body shell">
         <div class="review-stats" id="review-stats"></div>
         <section class="review-section" aria-labelledby="footprints-heading">
-          <div class="review-section-heading"><p>01 · FOOTPRINTS</p><h2 id="footprints-heading">今年の足跡</h2></div>
-          <div class="footprint-layout"><div class="achieved-timeline" id="achieved-timeline"></div><div class="place-cloud" id="place-cloud"></div></div>
+          <div class="review-section-heading"><p>01 · FOOTPRINTS</p><h2 id="footprints-heading">残ったもの</h2></div>
+          <div class="achieved-timeline" id="achieved-timeline"></div>
         </section>
-        <section class="review-section possibilities" aria-labelledby="possibilities-heading">
-          <div class="review-section-heading"><p>02 · POSSIBILITIES</p><h2 id="possibilities-heading">ここから広がったこと</h2></div><div class="branch-map" id="branch-map"></div>
+        <section class="review-section" aria-labelledby="connections-heading">
+          <div class="review-section-heading"><p>02 · PLACES / PEOPLE</p><h2 id="connections-heading">場所と人</h2></div>
+          <div class="review-connections"><div><h3>Places</h3><div class="review-tag-list" id="review-places"></div></div><div><h3>People</h3><div class="review-tag-list" id="review-people"></div></div></div>
         </section>
-        <section class="review-section quiet-section" aria-labelledby="letgo-heading">
-          <div class="review-section-heading"><p>03 · WHAT YOU LET GO</p><h2 id="letgo-heading">いったん、選ばなかったこと</h2></div><div class="letgo-list" id="letgo-list"></div>
+        <section class="review-section" aria-labelledby="possibilities-heading">
+          <div class="review-section-heading"><p>03 · BRANCHES</p><h2 id="possibilities-heading">ここから広がったもの</h2></div><div class="branch-map" id="branch-map"></div>
+        </section>
+        <section class="review-section" aria-labelledby="new-wants-heading">
+          <div class="review-section-heading"><p>04 · NEW WANTS</p><h2 id="new-wants-heading">今年生まれたこと</h2></div><div class="review-row-list" id="new-wants-list"></div>
+        </section>
+        <section class="review-section review-history-section" aria-labelledby="year-history-heading">
+          <div class="review-section-heading"><p>05 · HISTORY</p><h2 id="year-history-heading">履歴</h2></div><ul class="year-history-list" id="year-history-list"></ul>
         </section>
       </div>
     </section>
@@ -125,6 +132,6 @@
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="storage.js"></script>
-  <script src="2026.js"></script>
+  <script src="2026.js?v=plain-3"></script>
 </body>
 </html>

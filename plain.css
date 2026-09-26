@@ -456,6 +456,474 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   font-family: var(--jp);
 }
 
+/* Shared PLAIN language for Season Update and Year Review. */
+.theme-plain :is(#view-season, #view-review) {
+  color: var(--plain-ink);
+  font-family: var(--jp);
+}
+
+.theme-plain :is(#view-season, #view-review) .back-link {
+  min-height: 40px;
+  margin: 0 0 38px;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-decoration: none;
+}
+
+.theme-plain :is(#view-season, #view-review) :is(button, input, [role="button"]):focus-visible {
+  outline: 1px solid var(--plain-focus);
+  outline-offset: 3px;
+}
+
+.theme-plain #view-season .page-intro {
+  padding: clamp(64px, 9vw, 112px) 0 58px;
+  text-align: left;
+}
+
+.theme-plain #view-season .view-meta,
+.theme-plain #view-review .eyebrow {
+  margin: 0 0 16px;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+.theme-plain #view-season .page-intro h1,
+.theme-plain #view-review .review-hero h1 {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: clamp(38px, 5.5vw, 64px);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -.05em;
+}
+
+.theme-plain .season-layout {
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: clamp(34px, 6vw, 76px);
+  padding-bottom: 120px;
+}
+
+.theme-plain .season-progress { padding-top: 0; }
+
+.theme-plain .season-dial {
+  width: 96px;
+  height: 96px;
+  border-color: var(--plain-line);
+  background: var(--plain-surface);
+}
+
+.theme-plain .season-dial strong {
+  color: var(--plain-ink);
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.theme-plain .season-dial span,
+.theme-plain .season-progress p {
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+.theme-plain .season-line { width: 96px; margin-top: 22px; }
+.theme-plain .season-line i { height: 2px; background: var(--plain-line); }
+.theme-plain .season-line i.active { background: var(--plain-ink); }
+
+.theme-plain .season-content { gap: 72px; }
+
+.theme-plain .season-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--plain-line);
+}
+
+.theme-plain .season-section-title > span {
+  padding: 0;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+}
+
+.theme-plain .season-section-title h2 {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+}
+
+.theme-plain .season-choice-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  border: 0;
+}
+
+.theme-plain .choice-row {
+  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  gap: 24px 14px;
+  align-items: start;
+  min-height: 164px;
+  padding: 20px;
+  border: 1px solid var(--plain-line);
+  border-radius: var(--plain-card-radius);
+  background: rgba(255, 255, 255, .018);
+  opacity: .58;
+  transition: border-color .18s, background .18s, opacity .18s, transform .18s;
+}
+
+.theme-plain .choice-row:hover {
+  border-color: var(--plain-focus-line);
+  background: var(--plain-focus-wash);
+}
+
+.theme-plain .choice-row:has(input:checked) {
+  border-color: var(--plain-focus-line);
+  background: var(--plain-surface);
+  opacity: 1;
+}
+
+.theme-plain .choice-row input {
+  width: 22px;
+  height: 22px;
+  border-color: var(--plain-line);
+  background: transparent;
+}
+
+.theme-plain .choice-row input::after {
+  width: 10px;
+  height: 10px;
+  background: var(--plain-ink);
+}
+
+.theme-plain .choice-row h3 {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: clamp(16px, 1.55vw, 20px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -.025em;
+}
+
+.theme-plain .choice-row .choice-label {
+  grid-column: 2;
+  color: var(--plain-muted);
+  font-family: var(--jp);
+  font-size: 10px;
+}
+
+.theme-plain .season-save-bar {
+  bottom: 18px;
+  padding: 14px 14px 14px 20px;
+  border: 1px solid var(--plain-line);
+  border-radius: 18px;
+  background: rgba(29, 32, 36, .94);
+  color: var(--plain-ink);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(16px);
+}
+
+.theme-plain .season-save-bar strong {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.theme-plain .season-save-bar span {
+  color: var(--plain-muted);
+  font-size: 10px;
+}
+
+.theme-plain .season-save-bar .primary-button {
+  min-height: 46px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  background: var(--plain-ink);
+  color: var(--plain-bg);
+  font-family: var(--jp);
+  font-size: 12px;
+  font-weight: 600;
+  transform: none;
+}
+
+.theme-plain .season-save-bar .primary-button:hover {
+  background: var(--plain-ink);
+  filter: brightness(1.08);
+  transform: none;
+}
+
+.theme-plain .review-hero {
+  padding: clamp(64px, 9vw, 112px) 0 64px;
+  border-bottom: 1px solid var(--plain-line);
+  background: transparent;
+  color: var(--plain-ink);
+}
+
+.theme-plain .review-hero::after { display: none; }
+.theme-plain .review-title-wrap { text-align: left; }
+.theme-plain #view-review .review-hero h1 { font-size: clamp(44px, 7vw, 76px); }
+.theme-plain #view-review .back-link.light { color: var(--plain-muted); }
+
+.theme-plain .review-body {
+  margin-top: 0;
+  padding-bottom: 120px;
+}
+
+.theme-plain .review-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--plain-line);
+  background: transparent;
+  box-shadow: none;
+}
+
+.theme-plain .stat {
+  padding: 22px 16px;
+  border-color: var(--plain-line);
+  text-align: left;
+}
+
+.theme-plain .stat strong {
+  margin-bottom: 7px;
+  color: var(--plain-ink);
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.theme-plain .stat span {
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+.theme-plain .review-section {
+  padding-top: clamp(72px, 9vw, 112px);
+}
+
+.theme-plain .review-section-heading {
+  margin-bottom: 30px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--plain-line);
+  text-align: left;
+}
+
+.theme-plain .review-section-heading p {
+  margin: 0 0 8px;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+.theme-plain .review-section-heading h2 {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 500;
+  letter-spacing: -.03em;
+}
+
+.theme-plain .achieved-timeline { max-width: 900px; }
+
+.theme-plain .timeline-item {
+  grid-template-columns: 68px 10px minmax(0, 1fr) auto;
+  gap: 18px;
+  min-height: 98px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--plain-line);
+  cursor: pointer;
+}
+
+.theme-plain .timeline-date {
+  padding-top: 2px;
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: .06em;
+}
+
+.theme-plain .timeline-dot {
+  width: 7px;
+  height: 7px;
+  margin-top: 4px;
+  background: var(--plain-muted);
+}
+
+.theme-plain .timeline-dot::after {
+  left: 3px;
+  top: 11px;
+  height: 86px;
+  background: var(--plain-line);
+}
+
+.theme-plain .timeline-copy h3 {
+  margin: 0 0 8px;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.theme-plain .timeline-copy p {
+  margin: 0;
+  color: var(--plain-muted);
+  font-family: var(--jp);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.theme-plain .review-row-arrow { color: var(--plain-muted); }
+
+.theme-plain .review-connections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(30px, 7vw, 90px);
+}
+
+.theme-plain .review-connections h3 {
+  margin: 0 0 14px;
+  color: var(--plain-ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.theme-plain .review-tag-list { display: grid; }
+
+.theme-plain .review-tag-list > span {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--plain-line);
+  color: var(--plain-ink);
+  font-size: 13px;
+}
+
+.theme-plain .review-tag-list .review-empty-inline { color: var(--plain-muted); }
+
+.theme-plain .branch-map {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--plain-line);
+}
+
+.theme-plain .branch-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 74px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--plain-line);
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-plain .branch-card .from,
+.theme-plain .branch-card .to {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.theme-plain .branch-card .branch-arrow {
+  margin: 0;
+  color: var(--plain-muted);
+}
+
+.theme-plain .review-row-list { border-top: 1px solid var(--plain-line); }
+
+.theme-plain .review-row {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  min-height: 66px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--plain-line);
+  cursor: pointer;
+}
+
+.theme-plain .review-row time {
+  color: var(--plain-muted);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: .06em;
+}
+
+.theme-plain .review-row h3 {
+  margin: 0;
+  color: var(--plain-ink);
+  font-family: var(--jp);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.theme-plain .review-row > span { color: var(--plain-muted); }
+
+.theme-plain .review-history-section { opacity: .76; }
+
+.theme-plain .year-history-list {
+  max-width: 900px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.theme-plain .year-history-list li {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 20px;
+  padding: 10px 0;
+  color: var(--plain-muted);
+  font-size: 10px;
+}
+
+.theme-plain .year-history-list time {
+  font-family: var(--sans);
+  letter-spacing: .06em;
+}
+
+.theme-plain .year-history-list span { color: var(--plain-ink); }
+
+.theme-plain .year-history-list p {
+  margin: 3px 0 0;
+  color: var(--plain-muted);
+  line-height: 1.6;
+}
+
+.theme-plain :is(#view-season, #view-review) .review-empty {
+  padding: 24px 0;
+  border: 0;
+  color: var(--plain-muted);
+  text-align: left;
+}
+
 /* Wish detail — one continuous editorial surface. */
 .theme-plain .detail-dialog {
   width: min(720px, 100%);
@@ -845,6 +1313,14 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   .theme-plain .menu-button span:last-child { top: 25px; }
   .theme-plain .menu-button[aria-expanded="true"] span:first-child,
   .theme-plain .menu-button[aria-expanded="true"] span:last-child { top: 22px; }
+
+  .theme-plain .season-layout { grid-template-columns: 1fr; gap: 44px; }
+  .theme-plain .season-progress { display: flex; align-items: center; gap: 18px; }
+  .theme-plain .season-dial { flex: 0 0 auto; width: 76px; height: 76px; }
+  .theme-plain .season-line { flex: 1; width: auto; margin: 0; }
+  .theme-plain .review-stats { grid-template-columns: repeat(2, 1fr); }
+  .theme-plain .stat:nth-child(2) { border-right: 0; }
+  .theme-plain .stat:nth-child(-n+2) { border-bottom: 1px solid var(--plain-line); }
 }
 
 @media (max-width: 680px) {
@@ -874,6 +1350,21 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   .theme-plain .detail-title { font-size: clamp(30px, 9vw, 40px); }
   .theme-plain .detail-section { padding: 40px 0; }
   .theme-plain .detail-footprint-grid { grid-template-columns: 1fr; gap: 34px; }
+
+  .theme-plain #view-season .page-intro,
+  .theme-plain .review-hero { padding-top: 52px; }
+  .theme-plain .season-choice-list { grid-template-columns: 1fr; }
+  .theme-plain .choice-row { min-height: 142px; }
+  .theme-plain .season-save-bar { align-items: stretch; gap: 12px; padding: 14px; }
+  .theme-plain .season-save-bar > div { justify-content: center; }
+  .theme-plain .review-connections { grid-template-columns: 1fr; gap: 42px; }
+  .theme-plain .timeline-item { grid-template-columns: 58px 8px minmax(0, 1fr); gap: 12px; }
+  .theme-plain .timeline-item .review-row-arrow { display: none; }
+  .theme-plain .branch-card { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .theme-plain .branch-card .to { grid-column: 1 / -1; }
+  .theme-plain .review-row,
+  .theme-plain .year-history-list li { grid-template-columns: 58px minmax(0, 1fr); gap: 12px; }
+  .theme-plain .review-row > span { display: none; }
 }
 
 @media (max-height: 520px) {

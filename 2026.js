@@ -174,8 +174,8 @@ function renderSeason() {
   $$("#season-line i").forEach((item, index) => item.classList.toggle("active", index === currentSeason));
   const active = yearSelections().filter(item => selectionStatus(item) === "active").map(item => ({ selection: item, want: getWant(item.wantId) })).filter(item => item.want);
   const pool = candidates();
-  $("#season-active-list").innerHTML = active.length ? active.map(({ want }) => choiceRow(want, true, "次の季節へ", "carry")).join("") : `<div class="review-empty">いま継続中の Wish はありません。</div>`;
-  $("#season-candidate-list").innerHTML = pool.length ? pool.map(want => choiceRow(want, false, "今年の Wish に選ぶ", "adopt")).join("") : `<div class="review-empty">「やりたいかも」はまだありません。</div>`;
+  $("#season-active-list").innerHTML = active.length ? active.map(({ want }) => choiceRow(want, true, "次の季節へ", "carry")).join("") : `<div class="review-empty">—</div>`;
+  $("#season-candidate-list").innerHTML = pool.length ? pool.map(want => choiceRow(want, true, "今年のWishに選ぶ", "adopt")).join("") : `<div class="review-empty">—</div>`;
   updateSeasonCount();
 }
 
@@ -193,26 +193,33 @@ function updateSeasonCount() {
 function renderReview() {
   const selections = yearSelections();
   const achieved = selections.filter(item => selectionHasEvent(item, "achieved")).map(item => ({ selection: item, want: getWant(item.wantId), event: selectionEvents(item.id).find(event => event.type === "achieved") })).filter(item => item.want);
-  const letGo = selections.filter(item => selectionHasEvent(item, "let_go")).map(item => ({ selection: item, want: getWant(item.wantId), event: [...selectionEvents(item.id)].reverse().find(event => event.type === "let_go") })).filter(item => item.want);
   const places = [...new Set(achieved.flatMap(item => item.want.places || []))];
   const people = [...new Set(achieved.flatMap(item => item.want.people || []))];
   const branches = state.wants.filter(want => want.parentId && getWant(want.parentId));
+  const newWants = state.wants.filter(want => new Date(want.createdAt).getFullYear() === YEAR).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const yearHistory = state.wants.flatMap(want => {
+    const selection = currentSelection(want.id);
+    return addHistory(want, selection).map(item => ({ ...item, want }));
+  }).filter(item => new Date(item.date).getFullYear() === YEAR).sort((a, b) => new Date(b.date) - new Date(a.date));
   $("#review-year-label").textContent = YEAR;
   $("#review-stats").innerHTML = [
-    [selections.length, "WISHES CHOSEN"], [achieved.length, "ACHIEVED"], [places.length, "PLACES"], [branches.length, "NEW POSSIBILITIES"]
+    [selections.length, "WISHES"], [achieved.length, "FOOTPRINTS"], [places.length, "PLACES"], [people.length, "PEOPLE"]
   ].map(([value, label]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
 
   $("#achieved-timeline").innerHTML = achieved.length ? achieved.sort((a, b) => new Date(a.event.at) - new Date(b.event.at)).map(({ want, event }) => `
-    <article class="timeline-item"><span class="timeline-date">${formatMonth(event.at)}</span><i class="timeline-dot"></i><div class="timeline-copy"><h3>${escapeHtml(want.title)}</h3><p>${escapeHtml(want.afterword || "この日のことを、足跡として残しました。")}</p></div></article>`).join("") : `<div class="review-empty">叶った Wish は、ここに少しずつ並びます。</div>`;
+    <article class="timeline-item" data-wish-id="${want.id}" tabindex="0" role="button"><span class="timeline-date">${formatHistoryDate(event.at)}</span><i class="timeline-dot"></i><div class="timeline-copy"><h3>${escapeHtml(want.title)}</h3>${want.afterword ? `<p>${escapeHtml(want.afterword)}</p>` : ""}</div><span class="review-row-arrow" aria-hidden="true">→</span></article>`).join("") : `<div class="review-empty">—</div>`;
 
-  $("#place-cloud").innerHTML = `<h3>${places.length ? "歩いた場所" : "これから残る場所"}</h3><div class="place-tags">${places.length ? places.map(place => `<span>${escapeHtml(place)}</span>`).join("") : "<span>Wish が動いた場所だけを残します</span>"}${people.map(person => `<span>人 · ${escapeHtml(person)}</span>`).join("")}</div>`;
+  $("#review-places").innerHTML = places.length ? places.map(place => `<span>${escapeHtml(place)}</span>`).join("") : `<span class="review-empty-inline">—</span>`;
+  $("#review-people").innerHTML = people.length ? people.map(person => `<span>${escapeHtml(person)}</span>`).join("") : `<span class="review-empty-inline">—</span>`;
 
   $("#branch-map").innerHTML = branches.length ? branches.map(branch => {
     const parent = getWant(branch.parentId);
-    return `<article class="branch-card" data-wish-id="${branch.id}" tabindex="0" role="button"><span class="from">FROM THIS WISH</span><h3>${escapeHtml(parent.title)}</h3><div class="branch-arrow">↓</div><p class="to">${escapeHtml(branch.title)}</p></article>`;
-  }).join("") : `<div class="review-empty">Wish から新しい「やりたい」が生まれると、ここにつながります。</div>`;
+    return `<article class="branch-card" data-wish-id="${branch.id}" tabindex="0" role="button"><span class="from">${escapeHtml(parent.title)}</span><span class="branch-arrow">→</span><p class="to">${escapeHtml(branch.title)}</p></article>`;
+  }).join("") : `<div class="review-empty">—</div>`;
 
-  $("#letgo-list").innerHTML = letGo.length ? letGo.map(({ want, selection, event }) => `<article class="letgo-item" data-wish-id="${want.id}" tabindex="0" role="button"><h3>${escapeHtml(want.title)}</h3><p>${escapeHtml(event.note || "今はいったん選ばない")}${selectionStatus(selection) === "active" ? " · 再び選択中" : ""}</p></article>`).join("") : `<div class="review-empty">手放した Wish も、失敗ではなく選択の記録です。</div>`;
+  $("#new-wants-list").innerHTML = newWants.length ? newWants.map(want => `<article class="review-row" data-wish-id="${want.id}" tabindex="0" role="button"><time>${formatHistoryDate(want.createdAt)}</time><h3>${escapeHtml(want.title)}</h3><span aria-hidden="true">→</span></article>`).join("") : `<div class="review-empty">—</div>`;
+
+  $("#year-history-list").innerHTML = yearHistory.length ? yearHistory.map(item => `<li><time>${formatHistoryDate(item.date)}</time><div><span>${escapeHtml(item.want.title)}</span><p>${escapeHtml(item.text)}</p></div></li>`).join("") : `<li class="review-empty">—</li>`;
 }
 
 function renderAll() {
