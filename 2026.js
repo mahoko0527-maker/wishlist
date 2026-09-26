@@ -18,6 +18,7 @@ const today = () => new Date().toISOString();
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
 const formatDate = value => new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "short", day: "numeric" }).format(new Date(value));
 const formatMonth = value => new Intl.DateTimeFormat("ja-JP", { month: "short", day: "numeric" }).format(new Date(value));
+const formatHistoryDate = value => new Intl.DateTimeFormat("en-US", { month: "short", day: "2-digit" }).format(new Date(value)).toUpperCase();
 
 function demoState() {
   const year = YEAR;
@@ -265,23 +266,75 @@ function openDetail(wantId) {
   const history = addHistory(want, selection);
   const detail = $("#detail-content");
   detail.innerHTML = `
-    <span class="detail-status">${statusLabel(status)}</span>
-    <h2 class="detail-title">${escapeHtml(want.title)}</h2>
-    <p class="detail-date">${selection ? `${selection.year}年 · ${formatDate(selection.selectedAt)}に選択` : `${formatDate(want.createdAt)}に思いついた`}</p>
-    <div class="detail-actions">
-      ${!selection ? `<button class="primary-button" data-select-wish="${want.id}">今年の Wish に選ぶ</button>` : ""}
-      ${status === "active" ? `<button class="primary-button" data-complete-wish="${want.id}">叶った！</button><button class="secondary-button" data-letgo-wish="${want.id}">いったん手放す</button>` : ""}
-      ${status === "let_go" ? `<button class="primary-button" data-reselect-wish="${want.id}">もう一度選ぶ</button>` : ""}
-    </div>
-    ${parent ? `<section class="detail-section"><h3>きっかけ</h3><p>${escapeHtml(parent.title)} から</p></section>` : ""}
-    <section class="detail-section"><h3>メモ</h3><p>${escapeHtml(want.memo || "まだありません。")}</p></section>
-    <section class="detail-section"><h3>場所・人</h3><div class="detail-facts">${[...(want.places || []).map(item => `場所 · ${item}`), ...(want.people || []).map(item => `人 · ${item}`)].map(item => `<span>${escapeHtml(item)}</span>`).join("") || "<p>まだありません。</p>"}</div></section>
-    <section class="detail-section"><h3>ここから生まれた</h3>
-      <div class="detail-facts">${branches.map(item => `<span>${escapeHtml(item.title)}</span>`).join("") || "<p>まだありません。</p>"}</div>
-      <form class="inline-form" data-branch-form="${want.id}"><input maxlength="80" placeholder="ここから生まれた、やりたいかも"><button aria-label="Branchを追加">＋</button></form>
+    <header class="detail-hero">
+      <span class="detail-status ${status || "candidate"}">${statusLabel(status)}</span>
+      <h2 class="detail-title">${escapeHtml(want.title)}</h2>
+      <p class="detail-date">${selection ? `${selection.year} · ${formatDate(selection.selectedAt)}に選択` : `${formatDate(want.createdAt)}に追加`}</p>
+      ${parent ? `<button class="detail-origin" data-open-wish="${parent.id}">FROM · ${escapeHtml(parent.title)} <span>→</span></button>` : ""}
+      <div class="detail-actions">
+        ${!selection ? `<button class="primary-button" data-select-wish="${want.id}">今年のWishに選ぶ</button>` : ""}
+        ${status === "active" ? `<button class="primary-button" data-complete-wish="${want.id}">叶った！</button>` : ""}
+        ${status === "let_go" ? `<button class="primary-button" data-reselect-wish="${want.id}">もう一度選ぶ</button>` : ""}
+        <details class="detail-more">
+          <summary aria-label="その他の操作">…</summary>
+          <div class="detail-menu">
+            <button data-edit-memo="${want.id}">メモを編集</button>
+            ${status === "active" ? `<button data-letgo-wish="${want.id}">いったん手放す</button>` : ""}
+          </div>
+        </details>
+      </div>
+    </header>
+
+    <section class="detail-section detail-memo" aria-labelledby="detail-memo-heading">
+      <p class="detail-kicker">MEMO</p>
+      <h3 id="detail-memo-heading">メモ</h3>
+      ${want.memo ? `<p class="detail-prose">${escapeHtml(want.memo)}</p>` : ""}
+      <form class="detail-edit-form" data-memo-form="${want.id}" data-memo-editor hidden>
+        <textarea maxlength="240" aria-label="メモ">${escapeHtml(want.memo || "")}</textarea>
+        <button type="submit">保存</button>
+      </form>
     </section>
-    <section class="detail-section"><h3>履歴</h3><ul class="history-list">${history.map(item => `<li><time>${formatDate(item.date)}</time><span>${escapeHtml(item.text)}</span></li>`).join("")}</ul></section>
-    ${!selection ? `<section class="detail-section"><button class="danger-link" data-delete-wish="${want.id}">この「やりたいかも」を削除</button></section>` : ""}
+
+    <section class="detail-section detail-footprints" aria-labelledby="detail-footprints-heading">
+      <p class="detail-kicker">FOOTPRINTS</p>
+      <h3 id="detail-footprints-heading">そのWishに残ったもの</h3>
+      ${want.afterword ? `<p class="detail-afterword">${escapeHtml(want.afterword)}</p>` : ""}
+      <div class="detail-footprint-grid">
+        <div class="detail-subsection">
+          <h4>Places</h4>
+          ${(want.places || []).length ? `<div class="detail-fact-list">${want.places.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
+          <button class="detail-add-link" data-reveal-form="place">＋ 場所を追加</button>
+          <form class="inline-form" data-fact-form="places" data-want-id="${want.id}" data-inline-editor="place" hidden>
+            <input maxlength="60" aria-label="場所" placeholder="場所を入力"><button aria-label="場所を保存">＋</button>
+          </form>
+        </div>
+        <div class="detail-subsection">
+          <h4>People</h4>
+          ${(want.people || []).length ? `<div class="detail-fact-list">${want.people.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
+          <button class="detail-add-link" data-reveal-form="person">＋ 人を追加</button>
+          <form class="inline-form" data-fact-form="people" data-want-id="${want.id}" data-inline-editor="person" hidden>
+            <input maxlength="60" aria-label="人" placeholder="名前や関係を入力"><button aria-label="人を保存">＋</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-section detail-branches" aria-labelledby="detail-branches-heading">
+      <p class="detail-kicker">FROM THIS WISH</p>
+      <h3 id="detail-branches-heading">ここから生まれた</h3>
+      ${branches.length ? `<div class="detail-branch-list">${branches.map(item => `<article class="detail-branch-row" tabindex="0" role="button" data-wish-id="${item.id}"><span>${escapeHtml(item.title)}</span><b aria-hidden="true">→</b></article>`).join("")}</div>` : ""}
+      <button class="detail-add-link" data-reveal-form="branch">＋ やりたいかもを追加</button>
+      <form class="inline-form" data-branch-form="${want.id}" data-inline-editor="branch" hidden>
+        <input maxlength="80" aria-label="やりたいかも" placeholder="やりたいことを入力"><button aria-label="やりたいかもを保存">＋</button>
+      </form>
+    </section>
+
+    <section class="detail-section detail-history" aria-labelledby="detail-history-heading">
+      <p class="detail-kicker">HISTORY</p>
+      <h3 id="detail-history-heading">履歴</h3>
+      <ul class="history-list">${history.map(item => `<li><time>${formatHistoryDate(item.date)}</time><span>${escapeHtml(item.text)}</span></li>`).join("")}</ul>
+    </section>
+    ${!selection ? `<div class="detail-danger"><button class="danger-link" data-delete-wish="${want.id}">この「やりたいかも」を削除</button></div>` : ""}
   `;
   const dialog = $("#detail-dialog");
   if (!dialog.open) dialog.showModal();
@@ -379,6 +432,11 @@ document.addEventListener("click", event => {
     selectWant(quickSelect.dataset.quickSelect);
     return;
   }
+  const openWish = event.target.closest("[data-open-wish]");
+  if (openWish) {
+    openDetail(openWish.dataset.openWish);
+    return;
+  }
   const card = event.target.closest("[data-wish-id]");
   if (card && !event.target.closest("button, input")) {
     openDetail(card.dataset.wishId);
@@ -394,6 +452,25 @@ document.addEventListener("click", event => {
   if (letGo) letGoWish(letGo.dataset.letgoWish);
   const reselect = event.target.closest("[data-reselect-wish]");
   if (reselect) reselectWish(reselect.dataset.reselectWish);
+  const editMemo = event.target.closest("[data-edit-memo]");
+  if (editMemo) {
+    const editor = $("[data-memo-editor]", $("#detail-content"));
+    if (editor) {
+      editor.hidden = false;
+      $("textarea", editor)?.focus();
+      editMemo.closest("details")?.removeAttribute("open");
+    }
+  }
+  const revealForm = event.target.closest("[data-reveal-form]");
+  if (revealForm) {
+    const scope = revealForm.closest(".detail-subsection, .detail-section");
+    const editor = scope?.querySelector(`[data-inline-editor="${revealForm.dataset.revealForm}"]`);
+    if (editor) {
+      editor.hidden = false;
+      revealForm.hidden = true;
+      $("input", editor)?.focus();
+    }
+  }
   const remove = event.target.closest("[data-delete-wish]");
   if (remove && confirm("この「やりたいかも」を削除しますか？")) {
     state.wants.forEach(want => { if (want.parentId === remove.dataset.deleteWish) want.parentId = null; });
@@ -408,6 +485,32 @@ document.addEventListener("keydown", event => {
 });
 
 $("#detail-content").addEventListener("submit", event => {
+  const memoForm = event.target.closest("[data-memo-form]");
+  if (memoForm) {
+    event.preventDefault();
+    const want = getWant(memoForm.dataset.memoForm);
+    if (!want) return;
+    want.memo = $("textarea", memoForm).value.trim();
+    saveState();
+    renderAll();
+    openDetail(want.id);
+    showToast("メモを保存しました");
+    return;
+  }
+  const factForm = event.target.closest("[data-fact-form]");
+  if (factForm) {
+    event.preventDefault();
+    const want = getWant(factForm.dataset.wantId);
+    const value = $("input", factForm).value.trim();
+    const field = factForm.dataset.factForm;
+    if (!want || !value || !["places", "people"].includes(field)) return;
+    want[field] = [...new Set([...(want[field] || []), value])];
+    saveState();
+    renderAll();
+    openDetail(want.id);
+    showToast(field === "places" ? "場所を追加しました" : "人を追加しました");
+    return;
+  }
   const form = event.target.closest("[data-branch-form]");
   if (!form) return;
   event.preventDefault();
