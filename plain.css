@@ -12,6 +12,7 @@ body.theme-plain {
   --plain-focus-wash: rgba(255, 255, 255, .3);
   --plain-card-radius: 16px;
   --plain-card-gap: 20px;
+  --plain-header-bg: rgba(255, 255, 252, .9);
   color: var(--plain-ink);
   background: var(--plain-bg);
   font-family: var(--jp);
@@ -27,7 +28,7 @@ body.theme-plain:has(#view-home.is-active) .site-header {
   height: 68px;
   padding-inline: max(20px, 4vw);
   border-color: var(--plain-line);
-  background: rgba(255, 255, 252, .9);
+  background: var(--plain-header-bg);
   backdrop-filter: blur(16px);
 }
 

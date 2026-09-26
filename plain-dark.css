@@ -10,6 +10,7 @@ body.theme-plain.theme-plain-dark {
   --plain-focus: #c8cdd1;
   --plain-focus-line: rgba(255, 255, 255, .42);
   --plain-focus-wash: rgba(255, 255, 255, .035);
+  --plain-header-bg: rgba(25, 27, 31, .92);
   color: var(--plain-ink);
   background: var(--plain-bg);
 }
