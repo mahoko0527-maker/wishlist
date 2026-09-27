@@ -357,7 +357,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
 
 .theme-plain .candidate-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
   gap: 18px 12px;
   align-items: end;
@@ -400,26 +400,6 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   color: var(--plain-muted);
   font-family: var(--jp);
   font-size: 11px;
-}
-
-.theme-plain .candidate-select {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--plain-line);
-  border-radius: 50%;
-  background: #fff;
-  color: var(--plain-ink);
-  box-shadow: none;
-  font-size: 19px;
-  transform: none;
-}
-
-.theme-plain .candidate-select:hover {
-  border-color: var(--plain-accent);
-  background: var(--plain-accent);
-  color: #fff;
-  box-shadow: none;
-  transform: none;
 }
 
 .theme-plain #selected-empty:empty { display: none; }

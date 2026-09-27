@@ -108,7 +108,12 @@ function addSelectionEvent(selectionId, type, note = "") {
 function selectedWants() {
   return yearSelections().map(selection => ({ want: getWant(selection.wantId), selection, status: selectionStatus(selection) })).filter(item => item.want && ["active", "achieved"].includes(item.status));
 }
-function candidates() { return state.wants.filter(want => !currentSelection(want.id)); }
+function candidates() {
+  return state.wants.filter(want => {
+    const selection = currentSelection(want.id);
+    return !selection || selectionStatus(selection) === "let_go";
+  });
+}
 function branchesOf(parentId) { return state.wants.filter(want => want.parentId === parentId); }
 function seasonIndex() { return Math.min(3, Math.floor(new Date().getMonth() / 3)); }
 
@@ -157,7 +162,6 @@ function renderHome() {
     return `<article class="candidate-row" tabindex="0" role="button" data-wish-id="${want.id}">
       <span class="candidate-index">${String(index + 1).padStart(2, "0")}</span>
       <div><h3>${escapeHtml(want.title)}</h3>${parent ? `<p class="candidate-origin">↳ ${escapeHtml(parent.title)} から</p>` : ""}</div>
-      <button class="candidate-select" data-quick-select="${want.id}" aria-label="${escapeHtml(want.title)}を今年のWishに選ぶ">＋</button>
     </article>`;
   }).join("");
   $("#selected-empty").hidden = selected.length > 0;
@@ -249,20 +253,6 @@ function addCandidate(title, parentId = null) {
   return want;
 }
 
-function selectWant(wantId) {
-  if (currentSelection(wantId)) return;
-  if (yearSelections().length >= 100) {
-    showToast("今年選べる Wish は100件までです");
-    return;
-  }
-  const selection = { id: uid(), wantId, year: YEAR, selectedAt: today() };
-  state.selections.push(selection);
-  addSelectionEvent(selection.id, "selected");
-  saveState();
-  renderAll();
-  showToast("今年の Wish に選びました");
-}
-
 function openDetail(wantId) {
   const want = getWant(wantId);
   if (!want) return;
@@ -278,15 +268,7 @@ function openDetail(wantId) {
       <h2 class="detail-title">${escapeHtml(want.title)}</h2>
       <p class="detail-date">${selection ? `${selection.year} · ${formatDate(selection.selectedAt)}に選択` : `${formatDate(want.createdAt)}に追加`}</p>
       ${parent ? `<button class="detail-origin" data-open-wish="${parent.id}">FROM · ${escapeHtml(parent.title)} <span>→</span></button>` : ""}
-      <div class="detail-actions">
-        ${!selection ? `<button class="primary-button" data-select-wish="${want.id}">今年のWishに選ぶ</button>` : ""}
-        ${status === "active" ? `<button class="primary-button" data-complete-wish="${want.id}">叶った！</button>` : ""}
-        ${status === "let_go" ? `<button class="primary-button" data-reselect-wish="${want.id}">もう一度選ぶ</button>` : ""}
-        ${status === "active" ? `<details class="detail-more">
-          <summary aria-label="その他の操作">…</summary>
-          <div class="detail-menu"><button data-letgo-wish="${want.id}">いったん手放す</button></div>
-        </details>` : ""}
-      </div>
+      ${status === "active" ? `<div class="detail-actions"><button class="primary-button" data-complete-wish="${want.id}">叶った！</button></div>` : ""}
     </header>
 
     <section class="detail-section detail-memo" aria-labelledby="detail-memo-heading">
@@ -372,31 +354,11 @@ function completeWish(wantId, extras = {}) {
   showToast("叶った日を足跡に残しました");
 }
 
-function letGoWish(wantId) {
-  const selection = currentSelection(wantId);
-  if (!selection || selectionStatus(selection) !== "active") return;
-  const reason = prompt("今はいったん選ばない理由（任意）") || "";
-  addSelectionEvent(selection.id, "let_go", reason.trim());
-  saveState();
-  $("#detail-dialog").close();
-  renderAll();
-  showToast("選んだ歴史を残したまま、手放しました");
-}
-
-function reselectWish(wantId) {
-  const selection = currentSelection(wantId);
-  if (!selection || selectionStatus(selection) !== "let_go") return;
-  addSelectionEvent(selection.id, "reselected");
-  saveState();
-  $("#detail-dialog").close();
-  renderAll();
-  showToast("今年の Wish に戻しました");
-}
-
 function saveSeasonUpdate() {
   const kept = new Set($$('[data-season-choice="carry"]:checked').map(input => input.value));
   const adopted = $$('[data-season-choice="adopt"]:checked').map(input => input.value);
-  if (yearSelections().length + adopted.length > 100) {
+  const newAdoptions = adopted.filter(wantId => !currentSelection(wantId)).length;
+  if (yearSelections().length + newAdoptions > 100) {
     showToast("今年選べる Wish は100件までです");
     return;
   }
@@ -408,6 +370,11 @@ function saveSeasonUpdate() {
     }
   });
   adopted.forEach(wantId => {
+    const existing = currentSelection(wantId);
+    if (existing && selectionStatus(existing) === "let_go") {
+      addSelectionEvent(existing.id, "reselected");
+      return;
+    }
     const selection = { id: uid(), wantId, year: YEAR, selectedAt: today() };
     state.selections.push(selection);
     addSelectionEvent(selection.id, "selected");
@@ -434,11 +401,6 @@ document.addEventListener("click", event => {
     setView(viewLink.dataset.viewLink);
     return;
   }
-  const quickSelect = event.target.closest("[data-quick-select]");
-  if (quickSelect) {
-    selectWant(quickSelect.dataset.quickSelect);
-    return;
-  }
   const openWish = event.target.closest("[data-open-wish]");
   if (openWish) {
     openDetail(openWish.dataset.openWish);
@@ -451,14 +413,8 @@ document.addEventListener("click", event => {
   }
   const close = event.target.closest("[data-close-dialog]");
   if (close) $("#detail-dialog").close();
-  const select = event.target.closest("[data-select-wish]");
-  if (select) { selectWant(select.dataset.selectWish); $("#detail-dialog").close(); }
   const complete = event.target.closest("[data-complete-wish]");
   if (complete) openComplete(complete.dataset.completeWish);
-  const letGo = event.target.closest("[data-letgo-wish]");
-  if (letGo) letGoWish(letGo.dataset.letgoWish);
-  const reselect = event.target.closest("[data-reselect-wish]");
-  if (reselect) reselectWish(reselect.dataset.reselectWish);
   const editMemo = event.target.closest("[data-edit-memo]");
   if (editMemo) {
     const editor = $("[data-memo-editor]", $("#detail-content"));

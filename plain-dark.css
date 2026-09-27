@@ -78,18 +78,6 @@ body.theme-plain.theme-plain-dark .status-chip.achieved {
   color: #c4dacb;
 }
 
-body.theme-plain.theme-plain-dark .candidate-select {
-  border-color: var(--plain-line);
-  background: transparent;
-  color: var(--plain-ink);
-}
-
-body.theme-plain.theme-plain-dark .candidate-select:hover {
-  border-color: var(--plain-accent);
-  background: var(--plain-accent);
-  color: #1c2228;
-}
-
 body.theme-plain.theme-plain-dark .empty-state.compact {
   border-color: var(--plain-line);
   background: rgba(255, 255, 255, .025);
