@@ -4,6 +4,6 @@
  * Leave both values empty to keep The Hundred in local-only mode.
  */
 window.HUNDRED_SUPABASE_CONFIG = Object.freeze({
-  url: "",
-  publishableKey: ""
+  url: "https://tbjzvoijxtsndlvdgdje.supabase.co",
+  publishableKey: "sb_publishable_DWQdSPC4r4KRmmrG4qRrKA_GVVM44Jx"
 });
