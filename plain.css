@@ -100,21 +100,22 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
 .theme-plain .home-hero {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 68px);
-  min-height: calc(100svh - 68px);
-  padding-block: clamp(18px, 4vh, 40px) clamp(22px, 5vh, 52px);
+  min-height: min(680px, calc(100vh - 68px));
+  min-height: min(680px, calc(100svh - 68px));
+  padding-block: clamp(20px, 3vh, 32px) clamp(28px, 4vh, 44px);
   border-bottom: 1px solid var(--plain-line);
 }
 
 .theme-plain .home-toolbar {
   display: grid;
-  grid-template-columns: max-content;
+  grid-template-columns: max-content 112px;
   justify-content: center;
+  align-items: center;
   align-content: center;
-  gap: 20px;
+  column-gap: clamp(52px, 9vw, 128px);
   flex: 1 1 auto;
   min-height: min-content;
-  padding-block: 0;
+  padding-block: clamp(36px, 7vh, 72px);
   border-bottom: 0;
 }
 
@@ -125,7 +126,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   color: var(--plain-ink);
   opacity: 1;
   font-family: var(--jp);
-  font-size: clamp(48px, 5.4vw, 72px);
+  font-size: clamp(64px, 7vw, 88px);
   font-weight: 600;
   line-height: 1;
   letter-spacing: .012em;
@@ -137,7 +138,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
 .theme-plain .annual-count {
   position: static;
   z-index: auto;
-  width: 100%;
+  width: 112px;
   height: auto;
   aspect-ratio: 1;
   justify-content: center;
@@ -1315,6 +1316,19 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   .theme-plain .menu-button[aria-expanded="true"] span:first-child,
   .theme-plain .menu-button[aria-expanded="true"] span:last-child { top: 22px; }
 
+  .theme-plain .home-hero {
+    min-height: calc(100vh - 68px);
+    min-height: calc(100svh - 68px);
+    padding-block: 18px 28px;
+  }
+  .theme-plain .home-toolbar {
+    grid-template-columns: max-content;
+    gap: 18px;
+    padding-block: 0;
+  }
+  .theme-plain .home-toolbar h1 { font-size: 52px; }
+  .theme-plain .annual-count { width: 100%; }
+
   .theme-plain .season-layout { grid-template-columns: 1fr; gap: 44px; }
   .theme-plain .season-progress { display: flex; align-items: center; gap: 18px; }
   .theme-plain .season-dial { flex: 0 0 auto; width: 76px; height: 76px; }
@@ -1368,7 +1382,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   .theme-plain .review-row > span { display: none; }
 }
 
-@media (max-height: 520px) {
+@media (max-height: 520px) and (max-width: 800px) {
   .theme-plain .home-hero { padding-block: 10px 16px; }
   .theme-plain .home-toolbar { gap: 8px; }
   .theme-plain .home-toolbar h1 { font-size: 36px; }
