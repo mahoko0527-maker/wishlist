@@ -1,6 +1,6 @@
 (function createHundredCloud(global) {
   const CONFIG = global.HUNDRED_SUPABASE_CONFIG || {};
-  const SDK_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+  const SDK_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js";
   const EVENT_NAME = "hundred:cloud-status";
   const validConfig = Boolean(CONFIG.url && CONFIG.publishableKey);
   let client = null;
