@@ -6,6 +6,8 @@
 4. Auth → URL Configurationで公開URLをSite URLに設定し、Redirect URLsにも追加します。
 5. 公開後、初回アクセス時に既存localStorageがクラウドへコピーされることを確認します。移行直前の状態は `the-hundred-v2-prototype:pre-cloud-backup` に残ります。
 
+`Database error creating anonymous user` が出て、古い `schema.sql` を適用済みの場合は、SQL Editorで `fix-anonymous-signup.sql` を一度実行してから公開サイトを再読み込みします。
+
 匿名ユーザーもSupabase上では`authenticated`ロールです。テーブルはRLSで本人だけに限定し、友人のWishは`get_friend_wishes`関数が承認済みfriendshipとprivacy settingを確認した後、タイトル・達成状態・許可された達成日だけを返します。メモ、Places、People、手放した理由、履歴、Year Reviewは返しません。
 
 ## アカウント化
