@@ -926,6 +926,35 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   text-align: left;
 }
 
+/* Completion keeps its composition; only typography joins PLAIN. */
+.theme-plain .complete-card { font-family: var(--jp); }
+
+.theme-plain .complete-card .celebration-mark,
+.theme-plain .complete-card .dialog-close,
+.theme-plain .complete-card .section-kicker { font-family: var(--sans); }
+
+.theme-plain .complete-card h2 {
+  font-family: var(--jp);
+  font-weight: 600;
+}
+
+.theme-plain .complete-card .complete-title {
+  font-family: var(--jp);
+  font-weight: 500;
+}
+
+.theme-plain .complete-card .complete-lead { font-weight: 400; }
+
+.theme-plain .complete-card label {
+  font-family: var(--jp);
+  font-weight: 500;
+}
+
+.theme-plain .complete-card :is(input, textarea) {
+  font-family: var(--jp);
+  font-weight: 400;
+}
+
 /* Wish detail — one continuous editorial surface. */
 .theme-plain .detail-dialog {
   width: min(720px, 100%);
