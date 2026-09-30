@@ -147,7 +147,10 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--plain-surface);
+  background: transparent;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
   color: var(--plain-muted);
   font-family: var(--jp);
 }
