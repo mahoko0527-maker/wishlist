@@ -145,7 +145,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   align-items: center;
   gap: 3px;
   padding: 0;
-  border: 0;
+  border: 1px solid var(--plain-line);
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
@@ -157,31 +157,18 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
 
 .theme-plain .annual-progress {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-  transform: rotate(-90deg);
-}
-
-.theme-plain .annual-progress circle {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.theme-plain .annual-progress-base {
-  stroke: var(--plain-line);
-  stroke-width: 1;
-}
-
-.theme-plain .annual-progress-value {
-  stroke: var(--plain-muted);
-  stroke-width: 1.35;
-  stroke-linecap: round;
-  stroke-dasharray: none;
+  inset: -1px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--plain-muted) 0deg var(--annual-progress-angle, 0deg),
+    transparent var(--annual-progress-angle, 0deg) 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.4px), #000 calc(100% - 1.4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.4px), #000 calc(100% - 1.4px));
   opacity: 0;
-  transition: stroke-dasharray .35s ease, opacity .18s ease;
+  pointer-events: none;
+  transition: opacity .18s ease;
 }
 
 .theme-plain .annual-count-copy {

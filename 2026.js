@@ -145,13 +145,11 @@ function renderHome() {
   const selected = selectedWants();
   const pool = candidates();
   const allYear = yearSelections();
-  const progressCircle = $("#annual-progress-value");
+  const progressRing = $("#annual-progress-value");
   const progress = Math.min(allYear.length, 100);
-  const circumference = 2 * Math.PI * Number(progressCircle.getAttribute("r"));
-  const progressLength = circumference * (progress / 100);
   $("#selection-count").textContent = allYear.length;
-  progressCircle.style.strokeDasharray = `${progressLength} ${circumference - progressLength}`;
-  progressCircle.style.opacity = progress > 0 ? "1" : "0";
+  progressRing.style.setProperty("--annual-progress-angle", `${progress * 3.6}deg`);
+  progressRing.style.opacity = progress > 0 ? "1" : "0";
   $(".annual-count").setAttribute("aria-label", `今年のWish ${allYear.length} / 100。Year Reviewを開く`);
   $("#current-year-label").textContent = YEAR;
   $("#selected-year-label").textContent = YEAR;
