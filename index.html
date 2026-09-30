@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=Noto+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="2026.css?v=auth-2">
-  <link rel="stylesheet" href="plain.css?v=auth-2">
-  <link rel="stylesheet" href="plain-dark.css?v=auth-2">
+  <link rel="stylesheet" href="2026.css?v=hero-3">
+  <link rel="stylesheet" href="plain.css?v=hero-3">
+  <link rel="stylesheet" href="plain-dark.css?v=hero-3">
 </head>
 <body class="theme-plain theme-plain-dark">
   <div class="grain" aria-hidden="true"></div>
@@ -35,7 +35,11 @@
         <div class="home-toolbar shell">
           <h1 id="current-year-label">2026</h1>
           <button class="annual-count" data-view-link="review" aria-label="View this year's Wish history">
-            <strong id="selection-count">0</strong><span>/ 100</span>
+            <svg class="annual-progress" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="annual-progress-base" cx="50" cy="50" r="48"></circle>
+              <circle class="annual-progress-value" id="annual-progress-value" cx="50" cy="50" r="48" pathLength="100"></circle>
+            </svg>
+            <span class="annual-count-copy"><strong id="selection-count">0</strong><span>/ 100</span></span>
           </button>
         </div>
 
@@ -249,9 +253,9 @@
     </div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="supabase-config.js?v=auth-2"></script>
-  <script src="storage.js?v=auth-2"></script>
-  <script src="cloud.js?v=auth-2"></script>
-  <script src="2026.js?v=auth-2"></script>
+  <script src="supabase-config.js?v=hero-3"></script>
+  <script src="storage.js?v=hero-3"></script>
+  <script src="cloud.js?v=hero-3"></script>
+  <script src="2026.js?v=hero-3"></script>
 </body>
 </html>

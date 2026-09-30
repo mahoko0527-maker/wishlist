@@ -146,6 +146,8 @@ function renderHome() {
   const pool = candidates();
   const allYear = yearSelections();
   $("#selection-count").textContent = allYear.length;
+  $("#annual-progress-value").style.strokeDasharray = `${Math.min(allYear.length, 100)} 100`;
+  $(".annual-count").setAttribute("aria-label", `今年のWish ${allYear.length} / 100。Year Reviewを開く`);
   $("#current-year-label").textContent = YEAR;
   $("#selected-year-label").textContent = YEAR;
 

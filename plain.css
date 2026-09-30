@@ -112,7 +112,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   justify-content: center;
   align-items: center;
   align-content: center;
-  column-gap: clamp(52px, 9vw, 128px);
+  column-gap: clamp(68px, 11vw, 154px);
   flex: 1 1 auto;
   min-height: min-content;
   padding-block: clamp(36px, 7vh, 72px);
@@ -136,7 +136,7 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
 }
 
 .theme-plain .annual-count {
-  position: static;
+  position: relative;
   z-index: auto;
   width: 112px;
   height: auto;
@@ -145,15 +145,51 @@ body.theme-plain:has(#view-home.is-active) .site-footer button:focus-visible {
   align-items: center;
   gap: 3px;
   padding: 0;
-  border: 1px solid var(--plain-line);
+  border: 0;
   border-radius: 50%;
   background: var(--plain-surface);
   color: var(--plain-muted);
   font-family: var(--jp);
 }
 
+.theme-plain .annual-progress {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+.theme-plain .annual-progress circle {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.theme-plain .annual-progress-base {
+  stroke: var(--plain-line);
+  stroke-width: 1;
+}
+
+.theme-plain .annual-progress-value {
+  stroke: var(--plain-muted);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-dasharray: 0 100;
+  transition: stroke-dasharray .35s ease;
+}
+
+.theme-plain .annual-count-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
 .theme-plain .annual-count strong,
-.theme-plain .annual-count span {
+.theme-plain .annual-count-copy > span {
   color: var(--plain-muted);
   font-size: 11px;
   font-weight: 500;
@@ -1710,7 +1746,7 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
   }
   .theme-plain .home-toolbar {
     grid-template-columns: max-content;
-    gap: 18px;
+    gap: 24px;
     padding-block: 0;
   }
   .theme-plain .home-toolbar h1 { font-size: 52px; }
@@ -1729,7 +1765,7 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
   .theme-plain #view-home { --home-gutter: 15px; }
 
   .theme-plain .home-hero { padding-block: 14px 24px; }
-  .theme-plain .home-toolbar { gap: 16px; padding-block: 0; }
+  .theme-plain .home-toolbar { gap: 22px; padding-block: 0; }
   .theme-plain .home-toolbar h1 { font-size: 48px; }
   .theme-plain .annual-count { width: 100%; height: auto; }
 
