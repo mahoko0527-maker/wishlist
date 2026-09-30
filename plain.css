@@ -1477,9 +1477,102 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
 
 .theme-plain .account-identity span { color: var(--plain-muted); letter-spacing: .1em; }
 
+.theme-plain .auth-pane h3 {
+  margin: 4px 0 24px;
+  font-family: var(--jp);
+  font-size: clamp(21px, 4vw, 28px);
+  font-weight: 500;
+  letter-spacing: -.035em;
+}
+
+.theme-plain .auth-choice-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.theme-plain .account-primary-button,
+.theme-plain .account-secondary-button {
+  min-height: 50px;
+  padding: 12px 18px;
+  border: 1px solid var(--plain-line);
+  border-radius: 0;
+  font: 500 12px var(--jp);
+  cursor: pointer;
+}
+
+.theme-plain .account-primary-button {
+  border-color: var(--plain-ink);
+  color: var(--plain-bg);
+  background: var(--plain-ink);
+}
+
+.theme-plain .account-primary-button:hover { opacity: .86; }
+
+.theme-plain .account-secondary-button {
+  color: var(--plain-ink);
+  background: transparent;
+}
+
+.theme-plain .account-secondary-button:hover { background: var(--plain-focus-wash); }
+
+.theme-plain .auth-back,
+.theme-plain .account-text-button {
+  min-height: 40px;
+  padding: 8px 0;
+  border: 0;
+  color: var(--plain-muted);
+  background: transparent;
+  font: 600 9px var(--sans);
+  letter-spacing: .09em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-plain .auth-back { margin: -10px 0 16px; }
+.theme-plain .account-text-button:hover { color: var(--plain-ink); }
+
+.theme-plain .auth-message {
+  padding: 12px 0 6px;
+}
+
+.theme-plain .auth-message-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 22px;
+  border: 1px solid var(--plain-line);
+  border-radius: 50%;
+  color: #b9d0a2;
+  font: 500 15px var(--sans);
+}
+
+.theme-plain .auth-message p {
+  max-width: 520px;
+  margin: 0 0 18px;
+  color: var(--plain-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.theme-plain .auth-message p strong {
+  color: var(--plain-ink);
+  font-weight: 500;
+}
+
 .theme-plain .account-form { display: grid; gap: 10px; margin-top: 20px; }
 .theme-plain .account-form label { color: var(--plain-muted); font-size: 11px; }
 .theme-plain .account-form > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+
+.theme-plain .auth-form {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.theme-plain .auth-form label:not(:first-child) { margin-top: 8px; }
+.theme-plain .auth-form .account-primary-button { margin-top: 14px; }
 
 .theme-plain .account-form input {
   min-width: 0;
@@ -1509,9 +1602,25 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
 .theme-plain .share-code-row button:hover,
 .theme-plain .connection-row button:hover { background: var(--plain-focus-wash); }
 
-.theme-plain .account-signin { margin-top: 24px; color: var(--plain-muted); font-size: 11px; }
-.theme-plain .account-signin summary { min-height: 40px; padding: 10px 0; cursor: pointer; }
-.theme-plain .account-signin .account-form { grid-template-columns: 1fr 1fr auto; }
+.theme-plain .auth-form .account-primary-button:hover { background: var(--plain-ink); }
+
+.theme-plain .sharing-section { padding-bottom: 0; }
+
+.theme-plain .sharing-block {
+  padding: 8px 0 30px;
+}
+
+.theme-plain .sharing-block + .sharing-block {
+  padding-top: 30px;
+  border-top: 1px solid var(--plain-line);
+}
+
+.theme-plain .sharing-block-label {
+  margin: 0 0 18px;
+  color: var(--plain-muted);
+  font: 600 9px var(--sans);
+  letter-spacing: .12em;
+}
 
 .theme-plain .share-code-row {
   display: flex;
@@ -1582,7 +1691,7 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
 
 .theme-plain .account-notice.is-error { color: #d6a183; }
 .theme-plain .account-dialog [hidden] { display: none !important; }
-.theme-plain .account-dialog :is(button, input, summary):focus-visible {
+.theme-plain .account-dialog :is(button, input):focus-visible {
   outline: 1px solid var(--plain-focus);
   outline-offset: 3px;
 }
@@ -1661,10 +1770,10 @@ body[data-cloud-status="error"] .sync-dot { border-color: #d6a183; background: #
 
   .theme-plain .account-shell { padding: 52px 20px 32px; }
   .theme-plain .account-heading { padding-right: 38px; }
-  .theme-plain .account-form > div,
-  .theme-plain .account-signin .account-form { grid-template-columns: 1fr; }
+  .theme-plain .account-form > div { grid-template-columns: 1fr; }
   .theme-plain .account-form button { width: 100%; }
   .theme-plain .account-identity { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .theme-plain .auth-choice-list { grid-template-columns: 1fr; }
 }
 
 @media (max-height: 520px) and (max-width: 800px) {

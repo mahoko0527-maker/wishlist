@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=Noto+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="2026.css?v=cloud-1">
-  <link rel="stylesheet" href="plain.css?v=cloud-1">
-  <link rel="stylesheet" href="plain-dark.css?v=cloud-1">
+  <link rel="stylesheet" href="2026.css?v=auth-2">
+  <link rel="stylesheet" href="plain.css?v=auth-2">
+  <link rel="stylesheet" href="plain-dark.css?v=auth-2">
 </head>
 <body class="theme-plain theme-plain-dark">
   <div class="grain" aria-hidden="true"></div>
@@ -142,64 +142,116 @@
 
       <section class="account-section" id="cloud-unavailable">
         <p class="account-section-label">CLOUD SYNC</p>
-        <p>Supabaseを接続すると、Guestのままクラウド保存を開始できます。</p>
+        <p id="cloud-unavailable-copy">Supabaseを接続すると、Guestのままクラウド保存を開始できます。</p>
+        <button class="account-text-button" id="retry-cloud" type="button">再接続</button>
       </section>
 
       <div id="cloud-account-content" hidden>
-        <section class="account-section">
+        <section class="account-section auth-section" id="auth-section">
           <p class="account-section-label">ACCOUNT</p>
-          <div class="account-identity"><span id="account-kind">GUEST</span><strong id="account-email">ログインなしで利用中</strong></div>
-          <form class="account-form" id="link-email-form">
-            <label for="link-email">Guestデータをアカウントへ引き継ぐ</label>
-            <div><input id="link-email" type="email" autocomplete="email" placeholder="email@example.com" required><button>確認メールを送る</button></div>
-          </form>
-          <form class="account-form" id="password-form">
-            <label for="account-password">確認後のパスワード</label>
-            <div><input id="account-password" type="password" autocomplete="new-password" minlength="8" placeholder="8文字以上" required><button>設定する</button></div>
-          </form>
-          <details class="account-signin">
-            <summary>別端末で作ったアカウントにログイン</summary>
-            <form class="account-form" id="signin-form">
-              <input id="signin-email" type="email" autocomplete="email" placeholder="メールアドレス" required>
-              <input id="signin-password" type="password" autocomplete="current-password" placeholder="パスワード" required>
-              <button>ログイン</button>
+          <div class="auth-pane" data-auth-pane="guest">
+            <div class="account-identity"><span>GUEST</span><strong>ログインなしで利用中</strong></div>
+            <div class="auth-choice-list">
+              <button class="account-primary-button" type="button" data-auth-target="signup">アカウントを作る</button>
+              <button class="account-secondary-button" type="button" data-auth-target="login">ログイン</button>
+            </div>
+          </div>
+
+          <div class="auth-pane" data-auth-pane="signup" hidden>
+            <button class="auth-back" type="button" data-auth-target="guest">← BACK</button>
+            <h3>アカウントを作る</h3>
+            <form class="account-form auth-form" id="signup-form">
+              <label for="signup-email">メールアドレス</label>
+              <input id="signup-email" type="email" autocomplete="email" inputmode="email" required>
+              <label for="signup-password">パスワード</label>
+              <input id="signup-password" type="password" autocomplete="new-password" minlength="8" placeholder="8文字以上" required>
+              <button class="account-primary-button">アカウントを作る</button>
             </form>
-          </details>
+          </div>
+
+          <div class="auth-pane auth-message" data-auth-pane="signup-pending" hidden>
+            <span class="auth-message-mark" aria-hidden="true">✓</span>
+            <h3>確認メールを送信しました</h3>
+            <p><strong id="pending-signup-email"></strong> に届いたリンクを開いてください。確認後、この端末のデータを引き継いで同期します。</p>
+            <button class="account-text-button" type="button" data-auth-target="login">すでに確認した場合はログイン</button>
+          </div>
+
+          <div class="auth-pane" data-auth-pane="login" hidden>
+            <button class="auth-back" type="button" data-auth-target="guest">← BACK</button>
+            <h3>ログイン</h3>
+            <form class="account-form auth-form" id="signin-form">
+              <label for="signin-email">メールアドレス</label>
+              <input id="signin-email" type="email" autocomplete="email" inputmode="email" required>
+              <label for="signin-password">パスワード</label>
+              <input id="signin-password" type="password" autocomplete="current-password" required>
+              <button class="account-primary-button">ログイン</button>
+            </form>
+            <button class="account-text-button" id="forgot-password" type="button">パスワードを忘れた</button>
+          </div>
+
+          <div class="auth-pane" data-auth-pane="forgot" hidden>
+            <button class="auth-back" type="button" data-auth-target="login">← BACK</button>
+            <h3>パスワードを再設定</h3>
+            <form class="account-form auth-form" id="reset-request-form">
+              <label for="reset-email">メールアドレス</label>
+              <input id="reset-email" type="email" autocomplete="email" inputmode="email" required>
+              <button class="account-primary-button">再設定メールを送る</button>
+            </form>
+          </div>
+
+          <div class="auth-pane" data-auth-pane="recovery" hidden>
+            <h3>新しいパスワード</h3>
+            <form class="account-form auth-form" id="recovery-form">
+              <label for="recovery-password">パスワード</label>
+              <input id="recovery-password" type="password" autocomplete="new-password" minlength="8" placeholder="8文字以上" required>
+              <button class="account-primary-button">パスワードを更新</button>
+            </form>
+          </div>
+
+          <div class="auth-pane" data-auth-pane="account" hidden>
+            <div class="account-identity"><span>ACCOUNT</span><strong id="account-email"></strong></div>
+            <button class="account-text-button" id="signout-button" type="button">ログアウト</button>
+          </div>
         </section>
 
-        <section class="account-section">
-          <p class="account-section-label">MY SHARE CODE</p>
-          <form class="account-form compact" id="profile-form">
-            <label for="display-name">表示名</label>
-            <div><input id="display-name" maxlength="40" required><button>保存</button></div>
-          </form>
-          <div class="share-code-row"><strong id="share-code">—</strong><button type="button" id="copy-share-code">COPY</button></div>
-          <label class="privacy-choice"><input type="checkbox" id="friends-can-view"><span>承認した友人にWishリストを見せる</span></label>
-          <label class="privacy-choice"><input type="checkbox" id="show-achieved-date"><span>達成日も見せる</span></label>
-        </section>
+        <div id="sharing-content" hidden>
+          <section class="account-section sharing-section">
+            <p class="account-section-label">SHARING</p>
+            <div class="sharing-block">
+              <p class="sharing-block-label">PROFILE / SHARE CODE</p>
+              <form class="account-form compact" id="profile-form">
+                <label for="display-name">表示名</label>
+                <div><input id="display-name" maxlength="40" required><button>保存</button></div>
+              </form>
+              <div class="share-code-row"><strong id="share-code">—</strong><button type="button" id="copy-share-code">COPY</button></div>
+              <label class="privacy-choice"><input type="checkbox" id="friends-can-view"><span>承認した友人にWishリストを見せる</span></label>
+              <label class="privacy-choice"><input type="checkbox" id="show-achieved-date"><span>達成日も見せる</span></label>
+            </div>
 
-        <section class="account-section">
-          <p class="account-section-label">CONNECTIONS</p>
-          <form class="account-form compact" id="friend-request-form">
-            <label for="friend-code">Share Codeで閲覧申請</label>
-            <div><input id="friend-code" autocomplete="off" placeholder="HUNDRED-7F3K2" required><button>申請</button></div>
-          </form>
-          <div class="connection-list" id="connection-list"></div>
-        </section>
+            <div class="sharing-block" id="connections-block">
+              <p class="sharing-block-label">FRIENDS</p>
+              <form class="account-form compact" id="friend-request-form">
+                <label for="friend-code">Share Codeで閲覧申請</label>
+                <div><input id="friend-code" autocomplete="off" placeholder="HUNDRED-7F3K2" required><button>申請</button></div>
+              </form>
+              <div class="connection-list" id="connection-list"></div>
+            </div>
 
-        <section class="account-section friend-wishes" id="friend-wishes-section" hidden>
-          <button class="friend-back" id="friend-wishes-back">← CONNECTIONS</button>
-          <h3 id="friend-wishes-name"></h3>
-          <div id="friend-wishes-list"></div>
-        </section>
+            <div class="sharing-block friend-wishes" id="friend-wishes-section" hidden>
+              <button class="friend-back" id="friend-wishes-back">← FRIENDS</button>
+              <h3 id="friend-wishes-name"></h3>
+              <div id="friend-wishes-list"></div>
+            </div>
+          </section>
+        </div>
       </div>
       <p class="account-notice" id="account-notice" role="status" aria-live="polite"></p>
     </div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="supabase-config.js?v=cloud-1"></script>
-  <script src="storage.js?v=cloud-1"></script>
-  <script src="cloud.js?v=cloud-1"></script>
-  <script src="2026.js?v=cloud-1"></script>
+  <script src="supabase-config.js?v=auth-2"></script>
+  <script src="storage.js?v=auth-2"></script>
+  <script src="cloud.js?v=auth-2"></script>
+  <script src="2026.js?v=auth-2"></script>
 </body>
 </html>

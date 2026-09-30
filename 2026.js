@@ -541,6 +541,30 @@ function setAccountNotice(message, isError = false) {
   notice.classList.toggle("is-error", isError);
 }
 
+function accountErrorMessage(error) {
+  return window.HundredCloud?.describeError?.(error) || error?.message || "処理を完了できませんでした。";
+}
+
+let accountAuthView = "guest";
+
+function setAccountAuthView(view) {
+  const changed = accountAuthView !== view;
+  accountAuthView = view;
+  document.querySelectorAll("[data-auth-pane]").forEach(pane => {
+    pane.hidden = pane.dataset.authPane !== view;
+  });
+  if (changed) setAccountNotice("");
+}
+
+function syncAccountAuthView(cloudStatus = window.HundredCloud?.getStatus()) {
+  if (!cloudStatus) return;
+  if (cloudStatus.authFlow === "recovery") setAccountAuthView("recovery");
+  else if (cloudStatus.user && !cloudStatus.user.is_anonymous) setAccountAuthView("account");
+  else if (cloudStatus.authFlow === "signup-pending" || cloudStatus.pendingEmail) setAccountAuthView("signup-pending");
+  else if (!["signup", "login", "forgot"].includes(accountAuthView)) setAccountAuthView("guest");
+  $("#pending-signup-email").textContent = cloudStatus.pendingEmail || "登録したメールアドレス";
+}
+
 function updateCloudStatus(detail = window.HundredCloud?.getStatus() || { status: "local" }) {
   const labels = { local: "LOCAL", connecting: "SYNC…", syncing: "SYNC…", guest: "GUEST", account: "SYNCED", error: "OFFLINE" };
   const copy = {
@@ -556,27 +580,33 @@ function updateCloudStatus(detail = window.HundredCloud?.getStatus() || { status
   $("#cloud-status-copy").textContent = copy[detail.status] || copy.local;
   $("#cloud-unavailable").hidden = detail.status !== "local" && detail.status !== "error";
   $("#cloud-account-content").hidden = detail.status === "local" || detail.status === "error" || detail.status === "connecting";
+  if (detail.status === "error") {
+    $("#cloud-unavailable-copy").textContent = detail.error || copy.error;
+  }
   if (detail.error) setAccountNotice(detail.error, true);
+  syncAccountAuthView({ ...window.HundredCloud?.getStatus(), ...detail });
 }
 
 async function refreshAccountPanel() {
   const cloud = window.HundredCloud;
-  if (!cloud?.getStatus().enabled) return;
+  const cloudStatus = cloud?.getStatus();
+  if (!cloudStatus?.enabled) return;
+  syncAccountAuthView(cloudStatus);
+  const signedIn = Boolean(cloudStatus.user && !cloudStatus.user.is_anonymous);
+  $("#sharing-content").hidden = !signedIn;
+  if (!signedIn) return;
   try {
     const summary = await cloud.accountSummary();
     if (!summary.enabled) return;
     const { user, profile, privacy } = summary;
-    $("#account-kind").textContent = user.is_anonymous ? "GUEST" : "ACCOUNT";
-    $("#account-email").textContent = user.email || "ログインなしで利用中";
-    $("#link-email-form").hidden = !user.is_anonymous;
-    $(".account-signin").hidden = !user.is_anonymous;
+    $("#account-email").textContent = user.email || "SIGNED IN";
     $("#display-name").value = profile.display_name || "";
     $("#share-code").textContent = profile.share_code || "—";
     $("#friends-can-view").checked = privacy.friends_can_view;
     $("#show-achieved-date").checked = privacy.show_achieved_date;
     await renderConnections();
   } catch (error) {
-    setAccountNotice(error.message, true);
+    setAccountNotice(accountErrorMessage(error), true);
   }
 }
 
@@ -609,20 +639,22 @@ async function openFriendWishes(friendId, friendName) {
       <article class="friend-wish-row"><h4>${escapeHtml(wish.title)}</h4><span>${wish.achieved ? `叶った${wish.achieved_at ? ` · ${formatDate(wish.achieved_at)}` : ""}` : "選んでいる"}</span></article>
     `).join("") : `<p class="connection-empty">表示できるWishはありません。</p>`;
     $("#friend-wishes-section").hidden = false;
-    $("#connection-list").closest(".account-section").hidden = true;
+    $("#connections-block").hidden = true;
   } catch (error) {
-    setAccountNotice(error.message, true);
+    setAccountNotice(accountErrorMessage(error), true);
   }
 }
 
-async function runAccountAction(action, successMessage) {
+async function runAccountAction(action, successMessage, options = {}) {
   setAccountNotice("");
   try {
     await action();
     setAccountNotice(successMessage);
-    await refreshAccountPanel();
+    if (options.refresh !== false) await refreshAccountPanel();
+    return true;
   } catch (error) {
-    setAccountNotice(error.message, true);
+    setAccountNotice(accountErrorMessage(error), true);
+    return false;
   }
 }
 
@@ -632,10 +664,19 @@ document.addEventListener("click", event => {
     $("#menu-button").setAttribute("aria-expanded", "false");
     $("#account-dialog").showModal();
     setAccountNotice("");
+    syncAccountAuthView(window.HundredCloud?.getStatus());
     refreshAccountPanel();
     return;
   }
   if (event.target.closest("[data-close-account]")) $("#account-dialog").close();
+  const authTarget = event.target.closest("[data-auth-target]");
+  if (authTarget) {
+    if (authTarget.dataset.authTarget === "login") {
+      const pending = window.HundredCloud?.getStatus().pendingEmail;
+      if (pending && !$("#signin-email").value) $("#signin-email").value = pending;
+    }
+    setAccountAuthView(authTarget.dataset.authTarget);
+  }
   const response = event.target.closest("[data-respond-request]");
   if (response) {
     runAccountAction(
@@ -651,22 +692,65 @@ $("#account-dialog").addEventListener("click", event => {
   if (event.target === $("#account-dialog")) $("#account-dialog").close();
 });
 
-$("#link-email-form").addEventListener("submit", event => {
+$("#signup-form").addEventListener("submit", async event => {
   event.preventDefault();
-  runAccountAction(() => window.HundredCloud.linkEmail($("#link-email").value.trim()), "確認メールを送信しました。リンクを開いてください。");
+  const email = $("#signup-email").value.trim();
+  const succeeded = await runAccountAction(
+    () => window.HundredCloud.signUp(email, $("#signup-password").value),
+    "確認メールを送信しました。メール内のリンクを開いてください。",
+    { refresh: false }
+  );
+  if (succeeded) {
+    event.currentTarget.reset();
+    const signedIn = window.HundredCloud?.getStatus().user && !window.HundredCloud.getStatus().user.is_anonymous;
+    if (signedIn) {
+      setAccountAuthView("account");
+      setAccountNotice("アカウントを作成しました。");
+      await refreshAccountPanel();
+    } else {
+      $("#pending-signup-email").textContent = email;
+      setAccountAuthView("signup-pending");
+      setAccountNotice("確認メールを送信しました。メール内のリンクを開いてください。");
+    }
+  }
 });
 
-$("#password-form").addEventListener("submit", event => {
+$("#signin-form").addEventListener("submit", async event => {
   event.preventDefault();
-  runAccountAction(() => window.HundredCloud.setPassword($("#account-password").value), "パスワードを設定しました。");
-});
-
-$("#signin-form").addEventListener("submit", event => {
-  event.preventDefault();
-  runAccountAction(
+  const succeeded = await runAccountAction(
     () => window.HundredCloud.signIn($("#signin-email").value.trim(), $("#signin-password").value),
     "ログインしました。"
   );
+  if (succeeded) event.currentTarget.reset();
+});
+
+$("#forgot-password").addEventListener("click", () => {
+  $("#reset-email").value = $("#signin-email").value.trim();
+  setAccountAuthView("forgot");
+});
+
+$("#reset-request-form").addEventListener("submit", async event => {
+  event.preventDefault();
+  await runAccountAction(
+    () => window.HundredCloud.resetPassword($("#reset-email").value.trim()),
+    "パスワード再設定メールを送信しました。メール内のリンクを開いてください。",
+    { refresh: false }
+  );
+});
+
+$("#recovery-form").addEventListener("submit", async event => {
+  event.preventDefault();
+  const succeeded = await runAccountAction(
+    () => window.HundredCloud.completePasswordRecovery($("#recovery-password").value),
+    "パスワードを更新しました。"
+  );
+  if (succeeded) event.currentTarget.reset();
+});
+
+$("#signout-button").addEventListener("click", async () => {
+  if (!confirm("この端末でアカウントからログアウトしますか？")) return;
+  const succeeded = await runAccountAction(() => window.HundredCloud.signOut(), "ログアウトしました。");
+  if (succeeded) setAccountAuthView("guest");
 });
 
 $("#profile-form").addEventListener("submit", event => {
@@ -700,8 +784,10 @@ $("#copy-share-code").addEventListener("click", async () => {
 
 $("#friend-wishes-back").addEventListener("click", () => {
   $("#friend-wishes-section").hidden = true;
-  $("#connection-list").closest(".account-section").hidden = false;
+  $("#connections-block").hidden = false;
 });
+
+$("#retry-cloud").addEventListener("click", () => location.reload());
 
 window.addEventListener("hundred:cloud-status", event => {
   const detail = event.detail || {};
